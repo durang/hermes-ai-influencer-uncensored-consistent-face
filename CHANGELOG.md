@@ -1,6 +1,12 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v4.6 · 2026-11-01
+- Repo renombrado a `durang/hermes-skill-ai-influencer-consistent-sensorial` (el nombre viejo redirige). Título: «Hermes Skill · AI Influencer Consistent Sensorial».
+- Valeria pelirroja (rizos cobrizos, pecas, ojos avellana) explícito en su `SOUL.md` (sin otro color de pelo).
+- Regla **4j** Verificador de detalles y afirmaciones (SKILL, índice, README ES/EN, SOUL de Valeria, tests).
+- Regla **4k** y aviso en el README: Qwen-Image 2.1 bajo licencia de investigación, uso bajo responsabilidad de quien lo use; Hermes lo dice una vez por conversación.
+
 ## v4.5 · 2026-11-01
 - Revisión completa con checklist (flujo, nombres reales, solo Qwen, candado, confirmaciones, 4b–4i, almacenamiento, instalador, ES/EN, clase, sugerencias del sitio) y cierre de huecos:
   - **SKILL:** índice de reglas en §0b; confirmación válida y candado de 4h en el flujo; el control y el envío los hace `imagen_confirmar`; la tabla de reintentos ya no menciona el script; ranking renumerado; calibración solo fuera de producción; rutas de §6 a `personajes/<slug>/`; nota de la licencia de Qwen.

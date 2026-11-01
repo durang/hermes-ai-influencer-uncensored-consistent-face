@@ -1,4 +1,4 @@
-# hermes-skill-fotos-consistentes
+# Hermes Skill · AI Influencer Consistent Sensorial
 
 **Secret Fans Academia IA** · Skill para que un bot de Telegram (Hermes u otro) maneje un personaje de IA: chatear con fans, recibir órdenes del dueño y generar **fotos con la misma cara** que las referencias. Ejemplo incluido: **Valeria**, personaje ficticio adulto (26 años, pelirroja). Todo el contenido del repo es no explícito.
 
@@ -20,8 +20,8 @@
 
 ## Instalar
 ```bash
-git clone git@github.com:<usuario>/hermes-skill-fotos-consistentes.git
-cd hermes-skill-fotos-consistentes
+git clone git@github.com:<usuario>/hermes-skill-ai-influencer-consistent-sensorial.git
+cd hermes-skill-ai-influencer-consistent-sensorial
 ./install.sh --dry-run /opt/data/guia-imagen   # primero: muestra qué haría, sin tocar nada
 ./install.sh /opt/data/guia-imagen             # respalda en respaldos/AAAAMMDD-HHMMSS/ lo que va a pisar y luego instala
 cp /opt/data/guia-imagen/.env.example /opt/data/guia-imagen/.env   # pon HF_TOKEN y TELEGRAM_TOKEN_<NOMBRE> (nunca en git)
@@ -78,6 +78,9 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 10. Única vía: `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`); nunca `dynamic_space`, navegador ni scripts por terminal; revisa el error exacto antes de hablar de cuota.
 11. **«1 foto tal cual» solo cuando esa foto ES la cara del personaje**; cualquier otra foto es un panel extra y el panel 1 es la cara guardada.
 12. **Regla legal (4i):** lo sensual (bikini, lencería) y R2 solo con el personaje ficticio. La cara de una persona real (un tercero o la selfie del fan) entra con rol `persona` en un panel extra, con el personaje en el panel 1, y solo vale **vestida y no sensual**. **No soportado:** contenido explícito (desnudo o sexo) con la cara de una persona real.
+
+13. **Verificador de detalles y afirmaciones (4j):** antes de responder o confirmar, Hermes revisa que lo que afirma (precios, cantidad de fotos, referencias usadas, estado de la generación, rasgos del personaje) coincida con los datos y archivos reales; si no coincide, lo corrige y no inventa.
+14. **Aviso de licencia (4k):** Qwen-Image 2.1 va bajo licencia de investigación y el uso es responsabilidad de quien lo use; Hermes lo dice una sola vez por conversación y lo repite solo si se lo preguntan o hace falta.
 
 ### Herramientas del plugin (nombres reales)
 | Herramienta | Qué hace |
@@ -138,6 +141,9 @@ Grok Bot puede: hacer la entrevista contigo y escribir la carpeta del personaje;
 ## Seguridad
 Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Telegram, ni fotos reales (`personajes/*/ref/` solo guarda su README), ni datos de fans. Solo personajes adultos ficticios o personas reales con consentimiento escrito.
 
+## Aviso de licencia del modelo
+> **Qwen-Image 2.1** se usa bajo su **licencia de investigación** (Qwen RESEARCH LICENSE). El uso es **responsabilidad de quien lo use**. Hermes da este aviso **una sola vez por conversación** con el dueño (regla 4k) y solo lo repite si se lo preguntan o si hace falta.
+
 ## Licencia
 [MIT](LICENSE) para el código y la documentación de este repo. **No cubre** el modelo Qwen-Image 2.1 (Qwen RESEARCH LICENSE, solo uso no comercial) ni fotos de terceros. El nombre y la apariencia de los personajes de ejemplo (Valeria) se incluyen como ficha pública; si el dueño quiere reservarlos como marca, tiene que excluirlos de la MIT antes de publicar el repo.
 
@@ -150,6 +156,10 @@ Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Tele
 **Install:** clone, run `./install.sh --dry-run DEST` (prints every step, changes nothing) and then `./install.sh DEST`: before overwriting `skill/`, `tools/`, `docs/` (04/05 are never overwritten) or `config.env`, it copies them to `DEST/respaldos/YYYYMMDD-HHMMSS/`. Copy `.env.example` to `.env` (HF_TOKEN, TELEGRAM_TOKEN_<NAME>, DUENO_TELEGRAM_ID), `pip install gradio_client pillow`. The installer detects the environment: on a server/VPS (`CEREBRO_CENTRAL=1`, marker file, or cloud VM) `ALMACEN_ADULTO=r2-privado`; on your own computer `local`. **Single content policy:** on the server, clothed/bikini/lingerie/sensual content of the fictional character only; nudity and sex go to private Cloudflare R2, which does not exist yet (so they are not generated).
 
 **Initial interview:** the bot asks the owner for name, age (21+), backstory, appearance, personality, prices, reference photos and the character's Telegram bot, and fills `personajes/<name>/` (`PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `REGLAS.md`, `personaje.env.example`, `ref/README.md`). **One folder and one Telegram bot per character**, listed in `personajes/README.md`. Valeria is the first one, as a public profile only (no real photos, tokens or IDs).
+
+**Details and claims checker (rule 4j):** before replying or confirming, Hermes checks that what it states (prices, number of photos, references used, generation status, character traits) matches the real data and files; if it does not match, it corrects it and never makes things up.
+
+**Model license notice (rule 4k):** Qwen-Image 2.1 is used under its research license (Qwen RESEARCH LICENSE); use is the responsibility of whoever uses it. Hermes says this once per conversation with the owner and repeats it only if asked or when needed.
 
 **Plugin tools (real names):** `imagen_kontext` (step 1: builds the sheet and sends "I'll use these references and the model Qwen-Image 2.1 Studio…"; does not generate) → `imagen_confirmar` (step 2: generates with Qwen 2.1 only after a valid owner confirmation, rule 4h) · `imagen_cancelar` · `imagen_enviar` (only resends what `imagen_confirmar` produced). `imagen_qwen21` is a conceptual alias used in the docs; the internal name `imagen_kontext` is historical.
 

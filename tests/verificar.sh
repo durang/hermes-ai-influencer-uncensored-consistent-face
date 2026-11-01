@@ -70,6 +70,13 @@ ok "E1 EN: herramientas reales, sugerencias del sitio, licencia y dry-run" \
    "sed -n '/<a id=\"english\"><\/a>/,\$p' '$R/README.md' > '$T/en.md' && grep -q 'Plugin tools (real names)' '$T/en.md' && grep -q 'Character website (suggestions' '$T/en.md' && grep -q 'MIT' '$T/en.md' && grep -q 'dry-run' '$T/en.md'"
 ok "C1 clase en 3 sesiones: dry-run, REGLAS.md, 4g/4h" "sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q 'dry-run' && sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q 'REGLAS.md' && sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q '4h'"
 
+ok "N1 nombre nuevo: título y sin nombre viejo" "grep -q '^# Hermes Skill · AI Influencer Consistent Sensorial' '$R/README.md' && ! grep -rq 'hermes-skill-fotos-consistentes' '$R/README.md' '$R/docs' '$R/install.sh' '$R/skill'"
+ok "V1 Valeria pelirroja, sin morena" "grep -qi 'pelirroja' '$R/personajes/valeria/SOUL.md' && ! grep -rqi 'morena' '$R/personajes/valeria'"
+ok "J1 regla 4j en SKILL (índice + sección ES/EN)" "grep -q '4j\*\* verificador' '$R/skill/SKILL.md' && grep -q 'Regla 4j — Verificador de detalles y afirmaciones' '$R/skill/SKILL.md' && grep -q 'details and claims checker' '$R/skill/SKILL.md'"
+ok "J2 regla 4j en README ES y EN" "grep -q 'Verificador de detalles y afirmaciones (4j)' '$R/README.md' && grep -q 'Details and claims checker (rule 4j)' '$R/README.md'"
+ok "K1 aviso licencia Qwen en README + regla 4k una vez por conversación" "grep -q 'Aviso de licencia del modelo' '$R/README.md' && grep -q 'responsabilidad de quien lo use' '$R/README.md' && grep -q 'una sola vez por conversación' '$R/skill/SKILL.md' && grep -q 'once per conversation' '$R/README.md'"
+ok "CL1 CHANGELOG v4.6" "grep -q '^## v4.6' '$R/CHANGELOG.md'"
+
 # ---------- herramienta de hoja ----------
 if python3 -c "import PIL" 2>/dev/null; then
   python3 - "$T" <<'PY'

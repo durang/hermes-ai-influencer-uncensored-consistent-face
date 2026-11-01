@@ -35,3 +35,9 @@ El código de Hermes agrega una fila automáticamente: `| E{n} | síntoma | caus
 ## E34 · Vista previa doble: el modelo repetía el mensaje del plugin (1 nov 2026, C18)
 - **Qué pasó:** después de la vista previa del plugin, Hermes mandaba otro mensaje con su estilo repitiéndola («Te mandé la vista previa ✅… responde OK»), y al final otro «¡Listo! Te llegaron las 3 fotos…».
 - **Regla:** 4m. SOUL: no repetir ni resumir lo que ya mandó el plugin; el resultado de la herramienta trae `ya_enviado_al_usuario: true` y `no_repetir`.
+
+## E35 · Álbum suelto antes de la hoja en la vista previa (1 nov 2026, C19)
+- **Qué pasó:** en la vista previa C2, antes de la hoja numerada con su pie, llegaba un álbum sin texto con la cara de Valeria y la prenda.
+- **Causa:** lo mandaba el plugin (no el modelo): `imagen_kontext` llamaba `enviar_album` con todas las referencias (sendMediaGroup) y luego la hoja.
+- **Arreglo:** el plugin solo manda la hoja con su pie (`enviar_album([hoja], [texto])`). Test V1 en staging.
+- **Regla:** 4n.

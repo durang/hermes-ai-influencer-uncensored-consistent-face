@@ -31,7 +31,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 
 ## 0b. Reglas duras (v4.4 — bar 31-oct + E27–E31 + 4b–4i del 1-nov-2026)
-> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4l** 1 persona/escalera Qwen (C17), **4m** sin repetición (C18), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
+> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4l** 1 persona/escalera Qwen (C17), **4m** sin repetición (C18), **4n** vista previa = solo la hoja (C19), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
 **Antes de generar**
 1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» con la hoja adjunta. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
 2. **Cuenta las imágenes recibidas.** Di `Recibí N imágenes: 1=…, 2=…, 3=…` y usa `armar_hoja.py --recibidas N`. Nunca descartes una en silencio; si no usarás alguna, dilo antes y explica por qué.
@@ -224,3 +224,8 @@ Qwen-Image 2.1 se usa bajo licencia de investigación (Qwen RESEARCH LICENSE) y 
 Cuando `imagen_kontext` (preparar) o `imagen_confirmar` (generar) ya mandó su mensaje al usuario (la vista previa o las fotos), Hermes **no lo repite ni lo resume** con su estilo (nada de «Te mandé la vista previa ✅…» ni «¡Listo! Te llegaron las fotos…»): responde vacío o con a lo sumo una frase corta de personaje, sin datos técnicos. El resultado de la herramienta trae `ya_enviado_al_usuario: true` y `no_repetir` para recordárselo.
 
 **EN — Rule 4m:** once the plugin has sent its preview or the photos, Hermes does not repeat or summarize them; it replies empty or with at most one short in-character line, no technical details. Tool results carry `ya_enviado_al_usuario: true`.
+
+### Regla 4n — La vista previa es solo la hoja numerada con su pie (C19, 1 nov 2026)
+Con técnica C2 (varias referencias), la vista previa que manda `imagen_kontext` es **una sola imagen: la hoja numerada con su pie** (modelo, técnica, paneles, personas, fotos, id, «Responde OK…»). Ya no se manda antes un álbum suelto sin texto con las referencias (cara de Valeria + prenda): la hoja ya las muestra numeradas. Con A0 (1 foto) se manda esa foto con el pie, como antes.
+
+**EN — Rule 4n:** with C2 the preview is a single image, the numbered sheet with its caption; the separate uncaptioned reference album is no longer sent. A0 is unchanged.

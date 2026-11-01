@@ -1,6 +1,9 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v4.9 · 2026-11-01
+- C19: la vista previa C2 es solo la hoja numerada con su pie; el plugin ya no manda el álbum suelto de referencias antes (regla 4n, E35). Test C3.
+
 ## v4.8 · 2026-11-01
 - C17 y C18: solo la vista previa del plugin, sin repetición del modelo (regla 4m, E34); 1 persona = 1 cara + prenda con prompt de foto única, escalera solo Qwen 3 + 2, candado por chat de 10 min y confirmación idempotente (regla 4l, E33). Tests C1–C2.
 

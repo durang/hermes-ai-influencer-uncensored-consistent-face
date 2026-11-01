@@ -79,7 +79,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 - SI no manda foto → ENTONCES A0 con `$REFS/$REF_PRINCIPAL`.
 - SI pide un lugar real o una prenda exacta → ENTONCES C2 (cara guardada + prenda + lugar).
 - SI pide cambiar la ropa de una foto existente del personaje → ENTONCES C2 con esa ropa como panel extra (no hay otro modelo, 4g).
-- SI la petición es desnudo o sexo (R2 aún no existe), o usa a una persona real sin consentimiento, o lo sensual va con una cara real (4i) → ENTONCES no generes y explica la razón real.
+- SI la petición es desnudo o sexo (R2 aún no existe), o lo sensual o explícito va con la cara de una persona real (4i) → ENTONCES no generes y explica la razón real.
 
 **Mensaje de confirmación (Telegram, exacto)** — enviar con la hoja/referencias adjuntas:
 ```
@@ -185,8 +185,9 @@ No se usa FLUX/Kontext ni ningún otro modelo. Si Qwen falla el control: 3 reint
 ### Regla 4h — Confirmación y candado
 Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida de una vista previa vigente (idempotente). Mientras genera, los mensajes no interrumpen: responder una vez «Estoy generando tus fotos (x/N)». Con 1 persona usar UNA sola cara + prenda (dos caras de la misma persona hacen que Qwen copie la hoja).
 
-### Regla 4i — Legal (dura; Sergio + AInfluencer, 1 nov 2026)
+### Regla 4i — Legal (dura; Sergio + AInfluencer, 1 nov 2026; ajuste v4.4)
 1. **Lo sensual (bikini, lencería, sensual) y todo lo que vaya a R2 solo con el personaje ficticio.** Nunca con la cara de una persona real (ni siquiera la del dueño).
-2. **Rol `persona` con la cara de un tercero real:** solo vale **vestido y no sensual**, y solo con su permiso (el dueño o quien él confirme).
-3. **Nunca con fotos de terceros que mande un fan.** Si un fan manda una cara real, la vista previa la rechaza con un mensaje neutral, sin explicar infraestructura: «No puedo usar fotos de otras personas, pero si quieres te mando una mía 😉». No se genera nada.
-4. **Por qué:** combinar la cara de alguien real con contenido sensual es imagen íntima no consentida (TAKE IT DOWN Act en EE. UU., Ley Olimpia en México) y viola los términos de Fanvue y la política de contenido de Hugging Face («Sexual Content… created without explicit consent»).
+2. **Rol `persona` con la cara de una persona real** (un tercero o la selfie del propio fan): solo vale **vestido y no sensual**.
+3. **Selfie del fan:** no se rechaza. Entra con rol `persona` en un panel extra y **el personaje sigue en el panel 1** (4b/4f). Aplica el punto 2.
+4. **No soportado (fuera de alcance):** cualquier contenido explícito (desnudo o sexo) con la cara de una persona real. No se genera nunca, ni en el servidor ni en R2.
+5. **Por qué:** combinar la cara de alguien real con contenido sensual es imagen íntima no consentida (TAKE IT DOWN Act en EE. UU., Ley Olimpia en México) y viola los términos de Fanvue y la política de contenido de Hugging Face («Sexual Content… created without explicit consent»).

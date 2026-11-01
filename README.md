@@ -71,7 +71,7 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 9. **Solo Qwen 2.1** (regla 4g), sin modelo de respaldo. «Caras OK» solo si se verificó.
 10. Única vía: `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`); nunca `dynamic_space`, navegador ni scripts por terminal; revisa el error exacto antes de hablar de cuota.
 11. **«1 foto tal cual» solo cuando esa foto ES la cara del personaje**; cualquier otra foto es un panel extra y el panel 1 es la cara guardada.
-12. **Regla legal (4i):** lo sensual (bikini, lencería) y R2 solo con el personaje ficticio; una cara real de un tercero solo vestida y no sensual, con permiso, y **nunca** con fotos de terceros que mande un fan (la vista previa la rechaza con un mensaje neutral).
+12. **Regla legal (4i):** lo sensual (bikini, lencería) y R2 solo con el personaje ficticio. La cara de una persona real (un tercero o la selfie del fan) entra con rol `persona` en un panel extra, con el personaje en el panel 1, y solo vale **vestida y no sensual**. **No soportado:** contenido explícito (desnudo o sexo) con la cara de una persona real.
 
 ### Herramientas del plugin (nombres reales)
 | Herramienta | Qué hace |
@@ -84,6 +84,12 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 
 ### Política única de contenido
 En el servidor (Contabo / Cerebro Central): **vestido, bikini, lencería y sensual, solo del personaje ficticio**. **Desnudo y sexo van a Cloudflare R2, que todavía no existe**: mientras no exista, no se generan.
+
+## Sitio web del personaje (sugerencias)
+> Ayuda **no canónica**: no es una regla del skill y no bloquea nada.
+
+- **Recordatorio:** cuando se arme el sitio de Valeria (o de otro personaje), quien lo haga debe revisar `skill/SKILL.md` y poner una página de **Términos y Condiciones** en la que la responsabilidad del material que envía el fan (por ejemplo, su selfie) sea del fan.
+- **El límite se mantiene** aunque haya términos aceptados: nada explícito con la cara de una persona real.
 
 ## Pendientes antes de construir R2 (revisión del 1-nov-2026)
 > **No frena lo vestido** en lo que toca a las reglas de contenido. **Ojo con la licencia** (punto 3): esa sí afecta cualquier uso comercial, vestido incluido.
@@ -141,7 +147,7 @@ Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos 
 - **Boss mode:** the owner's Telegram ID gives orders (prices, approvals, errors, reports).
 - **Image mode:** follows `skill/SKILL.md`: confirm references + model, wait for OK, generate, validate, deliver.
 
-**Photo rules:** panel 1 is always the character's saved face from `personajes/<name>/ref/` (never a garment); client images are extra panels with a role (ropa/objeto/lugar/persona) named in the prompt ("panel 2 = shirt to wear"); no saved face = ask for it before generating; preview shows face + garment; "several" = 3 (max 4) with distinct poses and seeds; count received photos; keep each person's outfit; place in its own panel; no stretching; Qwen gets a 3:4 1152x1536 2-column grid with no gray padding; prompt starts with `Exactly N people, each appears only once`; one single scene, reject collages/duplicates/wrong count, up to 3 attempts with a new seed; deliver as many photos as requested, each validated; Qwen 2.1 only, no backup model (rule 4g); say "faces OK" only if verified; the only path is `imagen_kontext` → `imagen_confirmar` (doc alias `imagen_qwen21`); check the exact API error before claiming quota. "Use one photo as-is" only when that photo IS the character's face. **Legal rule (4i):** sensual content (bikini, lingerie) and R2 only with the fictional character; a real third party's face only clothed and non-sensual, with consent, never from photos a fan sends (the preview rejects it with a neutral message). **Content policy:** on the server, clothed/bikini/lingerie/sensual of the fictional character only; nudity and sex go to R2, which does not exist yet.
+**Photo rules:** panel 1 is always the character's saved face from `personajes/<name>/ref/` (never a garment); client images are extra panels with a role (ropa/objeto/lugar/persona) named in the prompt ("panel 2 = shirt to wear"); no saved face = ask for it before generating; preview shows face + garment; "several" = 3 (max 4) with distinct poses and seeds; count received photos; keep each person's outfit; place in its own panel; no stretching; Qwen gets a 3:4 1152x1536 2-column grid with no gray padding; prompt starts with `Exactly N people, each appears only once`; one single scene, reject collages/duplicates/wrong count, up to 3 attempts with a new seed; deliver as many photos as requested, each validated; Qwen 2.1 only, no backup model (rule 4g); say "faces OK" only if verified; the only path is `imagen_kontext` → `imagen_confirmar` (doc alias `imagen_qwen21`); check the exact API error before claiming quota. "Use one photo as-is" only when that photo IS the character's face. **Legal rule (4i):** sensual content (bikini, lingerie) and R2 only with the fictional character; a real person's face (a third party or the fan's own selfie) goes in an extra panel with role `persona`, the character stays in panel 1, and it is only allowed clothed and non-sensual; explicit content with a real person's face is not supported. **Content policy:** on the server, clothed/bikini/lingerie/sensual of the fictional character only; nudity and sex go to R2, which does not exist yet.
 
 **Pending before building R2:** Hugging Face content policy forbids sexual content created without explicit consent and any sexual content involving minors; the Space `assembledchaos/qwen-image-2-1-studio` is a community Space running a third-party "Uncensored" GGUF with no safety filter; the model is under the **Qwen RESEARCH LICENSE (non-commercial only)**: commercial use (selling or promoting with these photos) needs a separate license from Qwen. See the Spanish section for details.
 

@@ -40,6 +40,11 @@ ok "D6 política única (servidor: personaje ficticio; desnudo/sexo a R2 que aú
 ok "D7 README: pendientes legales antes de R2 (HF, Space, licencia Qwen)" \
    "grep -q 'Pendientes antes de construir R2' '$R/README.md' && grep -q 'Qwen RESEARCH LICENSE' '$R/README.md' && grep -q 'Uncensored' '$R/README.md'"
 
+ok "D8 v4.4: la selfie del fan entra como persona (no se rechaza); explícito con cara real = no soportado" \
+   "grep -q 'Selfie del fan:\*\* no se rechaza' '$R/skill/SKILL.md' && ! grep -qi 'la vista previa la rechaza' '$R/skill/SKILL.md' '$R/README.md' && grep -q 'No soportado' '$R/skill/SKILL.md' && grep -q 'No soportado' '$R/README.md'"
+ok "D9 Términos y Condiciones solo como sugerencia no canónica (no en las reglas)" \
+   "grep -q '## Sitio web del personaje (sugerencias)' '$R/README.md' && grep -q 'no canónica' '$R/README.md' && ! sed -n '/^## Reglas clave/,/^## /p' '$R/README.md' | grep -qi 'términos y condiciones'"
+
 # ---------- herramienta de hoja ----------
 if python3 -c "import PIL" 2>/dev/null; then
   python3 - "$T" <<'PY'

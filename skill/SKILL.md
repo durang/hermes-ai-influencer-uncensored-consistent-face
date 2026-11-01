@@ -172,3 +172,7 @@ Hermes guía paso a paso; no avanza sin respuesta.
 - Solo personajes originales o personas reales **con consentimiento**; siempre adultos.
 - Créditos de licencias: la foto de la Catedral de Hermosillo (`pruebas-modelo/multi-ref/lugar.jpg`) es de Wikimedia Commons, **CC BY 2.0**: dar crédito al autor al mostrarla en el curso.
 - Nada de reenviar URLs temporales; nada de `dynamic_space`; nada de reinicios sin OK de el dueño.
+
+
+### Regla 4f — Sujeto por defecto (canónica)
+El bot ES el personaje (p. ej. Valeria). Cualquier pedido de foto («una foto tuya», «quiero esto», «mándame una foto») sin otro sujeto explícito es SIEMPRE del personaje: panel 1 = su cara guardada de personajes/<slug>/ref. Otras personas solo entran si el usuario las nombra o manda su foto con rol persona. Las fotos que mande el cliente (camisa, lugar, objeto) se aplican AL personaje, nunca la reemplazan.

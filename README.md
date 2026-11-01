@@ -8,12 +8,15 @@
 | Ruta | Para qué |
 |---|---|
 | `skill/SKILL.md` | Lo que el bot ejecuta: reglas duras §0b, flujo con confirmación, hoja C2, errores |
-| `personajes/_plantilla/` | Salida de la entrevista: `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `personaje.env.example`, `ref/` |
-| `personajes/valeria/` | Ejemplo completo con Valeria |
+| `personajes/README.md` | Índice de personajes y su bot de Telegram |
+| `personajes/_plantilla/` | Salida de la entrevista: `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `REGLAS.md`, `personaje.env.example`, `ref/README.md` |
+| `personajes/valeria/` | Primer personaje: ficha pública de Valeria (sin fotos, tokens ni IDs) |
 | `tools/armar_hoja.py` | Hoja numerada (proporción original) + entrada Qwen 3:4 1152x1536 en 2 columnas sin relleno (`--qwen34`), `--lugar`, `--recibidas N` |
 | `tools/qwen21_generar.py` | Prueba manual de Qwen-Image 2.1 en el host (calibración). **El bot no lo usa** |
-| `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro, changelog |
-| `install.sh` | Instala y detecta el entorno |
+| `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro |
+| `install.sh` | Instala y detecta el entorno; respalda con fecha antes de pisar y tiene `--dry-run` |
+| `tests/verificar.sh` | Pruebas del repo (instalador, docs, personajes, hoja) |
+| `CHANGELOG.md` · `LICENSE` | Historial de versiones · Licencia MIT |
 
 ## Instalar
 ```bash
@@ -41,13 +44,16 @@ El bot pregunta al dueño, en orden, y llena `personajes/<nombre>/`:
 2. Apariencia (cabello, ojos, rasgos únicos, estilo) → `PERSONAJE.md`
 3. Personalidad, tono, emojis, idiomas → `SOUL.md`
 4. Catálogo y precios → `PRECIOS.md`
-5. Fotos de referencia (cara frontal primero) → `ref/`
-6. Bot de Telegram del personaje (creado con @BotFather; token solo en `.env`)
+5. Reglas del personaje (edad, divulgación de IA, política de contenido, regla 4i) → `REGLAS.md`
+6. Fotos de referencia (cara frontal primero; guía en `ref/README.md`, no se suben al repo) → `ref/`
+7. Bot de Telegram del personaje (creado con @BotFather; token solo en `.env`) → fila en `personajes/README.md`
 
 ## Una carpeta y un bot por personaje
 ```
 personajes/
-  valeria/   PERSONAJE.md SOUL.md PRECIOS.md personaje.env.example ref/
+  README.md  índice: personaje → bot de Telegram
+  _plantilla/
+  valeria/   PERSONAJE.md SOUL.md PRECIOS.md REGLAS.md personaje.env.example ref/README.md
   <otro>/    …
 ```
 Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `TELEGRAM_TOKEN_<OTRO>`), así sus chats, memoria y fotos no se mezclan.
@@ -57,7 +63,7 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 |---|---|---|
 | **Modo cliente (chat)** | Fans | Conversa con la voz de `SOUL.md`, vende según `PRECIOS.md`, nunca habla de token/GPU/API/modelos |
 | **Modo jefe** | Dueño (su ID de Telegram) | Da órdenes: cambiar precios, aprobar fotos, ver errores, pedir reportes |
-| **Modo imagen** | Dueño o pedido aprobado | Sigue `skill/SKILL.md`: confirma refs + modelo, espera OK, genera, valida, entrega |
+| **Modo imagen** | Dueño (los pedidos de fans, incluida su selfie, llegan al dueño y él los aprueba) | Sigue `skill/SKILL.md`: confirma refs + modelo, espera la confirmación válida (4h), genera, valida, entrega |
 
 ## Reglas clave de fotos (resumen de SKILL §0b)
 1. Confirma «Usaré estas referencias y el modelo X» y espera OK.
@@ -122,15 +128,18 @@ Confirmación: «Recibí 2 imágenes: 1=camisa, 2=café. Usaré la cara de Valer
 Prompt: `Exactly 1 person, appears only once: panel 1 = Valeria's face (identity); panel 2 = shirt to wear; panel 3 = the place. The numbered sheet is ONLY a reference: generate ONE brand-new full-frame photograph…`
 
 ## Clase en 3 sesiones
-- **Sesión 1 — Preparación, permisos e instalación:** cuentas (Hugging Face, Telegram/@BotFather, servidor o PC), tokens en `.env`, `install.sh`, cómo se detecta el entorno y la política de almacenamiento.
-- **Sesión 2 — Entrevista del personaje y modos:** correr la entrevista, llenar `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, probar modo cliente, modo jefe y modo imagen.
-- **Sesión 3 — Fotos consistentes y un bot por personaje:** referencias, hoja numerada, confirmación, validación (una escena, conteo), registro de errores; conectar el bot de Telegram del personaje.
+- **Sesión 1 — Preparación, permisos e instalación:** cuentas (Hugging Face, Telegram/@BotFather, servidor o PC); tokens solo en `.env`; `./install.sh --dry-run` y luego `./install.sh` (respaldo con fecha); detección del entorno; **política única de contenido** y licencias (Qwen RESEARCH LICENSE: uso no comercial; ver «Pendientes antes de construir R2»).
+- **Sesión 2 — Entrevista del personaje y modos:** copiar `personajes/_plantilla/`; llenar `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md` y `REGLAS.md` (edad, divulgación de IA, regla 4i); agregar el personaje y su bot a `personajes/README.md`; probar modo cliente, modo jefe y modo imagen.
+- **Sesión 3 — Fotos consistentes y un bot por personaje:** referencias en `ref/` (según `ref/README.md`); hoja numerada (panel 1 = cara guardada); confirmación válida y candado (4h); solo Qwen 2.1 (4g); validación (una escena, conteo de caras); registro de errores; conectar el bot de Telegram del personaje.
 
 ## Usarlo con Grok Bot
 Grok Bot puede: hacer la entrevista contigo y escribir la carpeta del personaje; armar y revisar hojas con `armar_hoja.py`; documentar errores nuevos en `docs/04-ERRORES.md` y correr la revisión nocturna. Los cambios en el servidor (contenedor, plugins, reinicios) los hace el bot del servidor (Cerebro Central) **solo con el OK del dueño**. Pídele, por ejemplo: «Crea el personaje Ana con la plantilla» o «Revisa por qué la última foto salió como collage».
 
 ## Seguridad
-Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos ficticios o personas reales con consentimiento escrito.
+Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Telegram, ni fotos reales (`personajes/*/ref/` solo guarda su README), ni datos de fans. Solo personajes adultos ficticios o personas reales con consentimiento escrito.
+
+## Licencia
+[MIT](LICENSE) para el código y la documentación de este repo. **No cubre** el modelo Qwen-Image 2.1 (Qwen RESEARCH LICENSE, solo uso no comercial) ni fotos de terceros. El nombre y la apariencia de los personajes de ejemplo (Valeria) se incluyen como ficha pública; si el dueño quiere reservarlos como marca, tiene que excluirlos de la MIT antes de publicar el repo.
 
 ---
 <a id="english"></a>
@@ -138,9 +147,11 @@ Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos 
 
 **Secret Fans Academia IA** · A skill for a Telegram bot (Hermes or any other) that runs an AI character: chats with fans, takes orders from the owner, and generates **photos with the same face** as the references. Example: **Valeria**, a fictional adult character (26, redhead). Everything in the repo is non-explicit.
 
-**Install:** clone, run `./install.sh DEST`, copy `.env.example` to `.env` (HF_TOKEN, TELEGRAM_TOKEN_<NAME>), `pip install gradio_client pillow`. The installer detects the environment: on a server/VPS (`CEREBRO_CENTRAL=1`, marker file, or cloud VM) `ALMACEN_ADULTO=r2-privado`; on your own computer `local`. Server disk holds only bikini/lingerie/sensual content; nude/sexual content goes to private Cloudflare R2 (**TODO: not built yet**).
+**Install:** clone, run `./install.sh --dry-run DEST` (prints every step, changes nothing) and then `./install.sh DEST`: before overwriting `skill/`, `tools/`, `docs/` (04/05 are never overwritten) or `config.env`, it copies them to `DEST/respaldos/YYYYMMDD-HHMMSS/`. Copy `.env.example` to `.env` (HF_TOKEN, TELEGRAM_TOKEN_<NAME>, DUENO_TELEGRAM_ID), `pip install gradio_client pillow`. The installer detects the environment: on a server/VPS (`CEREBRO_CENTRAL=1`, marker file, or cloud VM) `ALMACEN_ADULTO=r2-privado`; on your own computer `local`. **Single content policy:** on the server, clothed/bikini/lingerie/sensual content of the fictional character only; nudity and sex go to private Cloudflare R2, which does not exist yet (so they are not generated).
 
-**Initial interview:** the bot asks the owner for name, age (21+), backstory, appearance, personality, prices, reference photos and the character's Telegram bot, and fills `personajes/<name>/` (`PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `ref/`). **One folder and one Telegram bot per character.**
+**Initial interview:** the bot asks the owner for name, age (21+), backstory, appearance, personality, prices, reference photos and the character's Telegram bot, and fills `personajes/<name>/` (`PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `REGLAS.md`, `personaje.env.example`, `ref/README.md`). **One folder and one Telegram bot per character**, listed in `personajes/README.md`. Valeria is the first one, as a public profile only (no real photos, tokens or IDs).
+
+**Plugin tools (real names):** `imagen_kontext` (step 1: builds the sheet and sends "I'll use these references and the model Qwen-Image 2.1 Studio…"; does not generate) → `imagen_confirmar` (step 2: generates with Qwen 2.1 only after a valid owner confirmation, rule 4h) · `imagen_cancelar` · `imagen_enviar` (only resends what `imagen_confirmar` produced). `imagen_qwen21` is a conceptual alias used in the docs; the internal name `imagen_kontext` is historical.
 
 **Three modes:**
 - **Client mode (chat):** talks to fans in the `SOUL.md` voice, sells from `PRECIOS.md`, never mentions tokens/GPU/API/models.
@@ -151,6 +162,10 @@ Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos 
 
 **Pending before building R2:** Hugging Face content policy forbids sexual content created without explicit consent and any sexual content involving minors; the Space `assembledchaos/qwen-image-2-1-studio` is a community Space running a third-party "Uncensored" GGUF with no safety filter; the model is under the **Qwen RESEARCH LICENSE (non-commercial only)**: commercial use (selling or promoting with these photos) needs a separate license from Qwen. See the Spanish section for details.
 
-**3-session class:** (1) setup, permissions, installation; (2) character interview + modes; (3) consistent-photo workflow + one Telegram bot per character.
+**3-session class:** (1) setup, accounts, tokens in `.env`, `install.sh --dry-run` then install (dated backup), single content policy and licenses; (2) character interview with `personajes/_plantilla/` (`PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `REGLAS.md`), add the bot to `personajes/README.md`, try the three modes; (3) consistent photos: `ref/` per `ref/README.md`, numbered sheet with the saved face in panel 1, valid confirmation + lock (4h), Qwen 2.1 only (4g), validation, error log, connect the character's own bot.
+
+**Character website (suggestions, non-canonical):** when the character's site is built, whoever builds it should review the skill and add Terms & Conditions stating that the fan is responsible for the material they send (e.g. their selfie). It does not block anything; the limit stays: nothing explicit with a real person's face.
+
+**Security & license:** no tokens, Telegram IDs, real photos or fan data in the repo. [MIT](LICENSE) for the repo's code and docs; it does not cover the Qwen model (Qwen RESEARCH LICENSE, non-commercial) or third-party photos.
 
 **Using it with Grok Bot:** Grok Bot runs the interview, writes the character folder, builds/reviews sheets, logs errors and runs the nightly review; server changes go through the server bot (Cerebro Central) with the owner's OK.

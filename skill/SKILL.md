@@ -12,7 +12,7 @@ description: Úsalo cuando el dueño (modo jefe) o un alumno pida una foto de su
 source $GUIA/config.env        # lo escribe install.sh (GUIA, ALMACEN_*, PERSONAJE_*)
 PROC=$GUIA/skill
 REFS=$GUIA/personajes/$PERSONAJE_SLUG/ref   # $REF_PRINCIPAL = cara guardada (panel 1 SIEMPRE)
-SALIDAS=$ALMACEN_SALIDAS          # AAAAMMDD-HHMM-escena-intento.png
+SALIDAS=$ALMACEN_SALIDAS          # solo calibración manual / curso: el plugin trabaja en /tmp y borra después de enviar
 TOOLS=$GUIA/tools                  # armar_hoja.py (qwen21_generar.py: solo calibración manual en el host, nunca el bot)
 REGISTRO=$GUIA/docs/05-REGISTRO.md      # bitácora automática (metadatos)
 ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
@@ -30,9 +30,10 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 | `dynamic_space` | **PROHIBIDO para imágenes** | (E1) |
 
 
-## 0b. Reglas duras (v3 — bar 31-oct + E27–E31 del 1-nov-2026)
+## 0b. Reglas duras (v4.4 — bar 31-oct + E27–E31 + 4b–4i del 1-nov-2026)
+> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4i** legal: al final del archivo.
 **Antes de generar**
-1. **Confirma referencias + modelo y espera el OK.** Manda «Usaré estas referencias y el modelo X» con la hoja adjunta. Sin OK explícito del dueño no se genera nada.
+1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» con la hoja adjunta. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
 2. **Cuenta las imágenes recibidas.** Di `Recibí N imágenes: 1=…, 2=…, 3=…` y usa `armar_hoja.py --recibidas N`. Nunca descartes una en silencio; si no usarás alguna, dilo antes y explica por qué.
 3. **Misma ropa por persona.** Cada persona conserva la ropa de SU referencia salvo que el dueño pida otra; el prompt la describe por persona (ej.: `the man from panel 1 wearing his dark grey t-shirt`). Nunca ropa genérica.
 4. **El lugar va en su propio panel** (`--lugar`, siempre el último) y el prompt lo cita: `in the {lugar} from panel N`.
@@ -89,36 +90,37 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 ✍️ Prompt: "{prompt}"
 ¿Le doy? Responde OK, o dime qué cambio (referencia, modelo o prompt).
 ```
-SI el dueño responde OK/sí/dale → generar. SI cambia algo → aplicar y volver a mandar la confirmación. SI no responde → no generar.
+SI el dueño responde con una **confirmación válida** (4h: sí, si, ok, va, dale, ándale; sin importar mayúsculas ni acentos) **como su último mensaje** → el plugin genera (`imagen_confirmar`). El bot no puede confirmar por su cuenta. SI cambia algo → aplicar y volver a mandar la confirmación. SI no responde → no generar.
+**Candado (4h):** mientras genera, los mensajes no interrumpen; se responde una sola vez «Estoy generando tus fotos (x/N)».
 
 **Pasos**
 1. Confirmación (arriba) → esperar OK.
 2. Generar: `imagen_confirmar(id, prompt)` tras la confirmación válida (nunca un script por terminal ni tokens en la línea de comando).
-3. QC automático: archivo existe, >200 KB, ~864×1152.
-4. Enviar con `imagen_enviar` y el texto: `¿Es {PERSONAJE_NOMBRE}? Marca ✅ o ❌ (y qué falla: cara, pelo, pecas, ojos, fondo).`
+3. Control automático (regla 8): una sola escena y N caras; si no pasa, seed nueva (4g).
+4. `imagen_confirmar` manda la foto con el pie de configuración real. El bot pregunta: `¿Es {PERSONAJE_NOMBRE}? Marca ✅ o ❌ (y qué falla: cara, pelo, pecas, ojos, fondo).` (`imagen_enviar` solo sirve para reenviar algo que ya produjo `imagen_confirmar`.)
 5. SI ✅ → registrar y terminar. SI ❌ → aplicar UNA corrección de la tabla del §5 y reintentar.
 6. Registrar SIEMPRE (también los ❌).
 
 **Política de reintentos**
 | Caso | Acción |
 |---|---|
-| Error de red / cola | El script reintenta 3 veces (20/40/80 s) |
-| Cuota agotada (código 3) | Mostrar el error exacto de la API y avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space |
+| Error de red / cola | El plugin devuelve el error exacto; reintentar después, sin cambiar de Space |
+| Cuota agotada | Mostrar el **error exacto** de la API (el plugin lo manda con hora y cuenta verificada) y avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space ni de modelo |
 | Qwen falla 3 veces | 2 intentos más con hoja simple (1 cara + prenda, «single photo, no panels»); si falla, mostrar el error exacto y preguntar qué cambiar. Nunca ofrecer otro modelo (4g) |
 | ❌ de el dueño | Máx. 3 intentos de calidad, una variable por intento; al 3.º avisa el motivo |
 
 ## 3. Calibración
 **Ranking (pruebas 31-oct-2026)**
 1. **Qwen-Image 2.1 Studio** (`assembledchaos/qwen-image-2-1-studio`) — principal. Cara más fiel. Piel algo lisa, 1 MP (falta upscaler para HD real).
-3. Qwen-Image-Edit 2509/2511 — Spaces oficiales con TypeError (31-oct). No usar hasta re-probar.
-4. PuLID — malo: "otra mujer parecida", ojos azules. (Otros modelos de edición probados el 31-oct quedaron retirados por la regla 4g.)
+2. Qwen-Image-Edit 2509/2511 — Spaces oficiales con TypeError (31-oct). No usar (4g).
+3. PuLID — malo: "otra mujer parecida", ojos azules. (Otros modelos de edición probados el 31-oct quedaron retirados por la regla 4g.)
 
 **Parámetros (copiar)**
 ```
 QWEN21:  modo="Edit an image" steps=40 seed=42 randomize=False aspect="Portrait · 3:4" (o "Square · 1:1") → usar r[1]
 HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 columnas sin relleno; --zoom 1.3–1.6 opcional en panel 1
 ```
-**Calibrar un modelo nuevo**
+**Calibrar un modelo nuevo** (solo AInfluencer, fuera de producción; cambiar el modelo de producción requiere decisión del dueño y actualizar la regla 4g)
 1. Fija referencia (`$REF_PRINCIPAL`), prompt de prueba (carro, con ropa) y seed 42.
 2. Genera A (modelo actual) y B (modelo nuevo) con lo mismo.
 3. Cambia **una sola variable** por ronda (pasos, guidance, aspect, recorte). Anota cada ronda en el registro.
@@ -130,7 +132,7 @@ HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 
 ```
 python3 $TOOLS/armar_hoja.py $SALIDAS/hoja-<escena>.png --cara $REFS/$REF_PRINCIPAL [--extra ropa:<prenda>] [--extra persona:<persona2>] [--extra objeto:<obj>] --lugar <lugar> --recibidas N --qwen34 $SALIDAS/entrada34-<escena>.png   # Qwen recibe entrada34
 ```
-Ejemplos reales: `ejemplos/hoja-C2-ejemplo-zoom16.png` (cara recortada, recomendado); resultados `../pruebas-modelo/multi-ref/qwen-hoja-A.png`, `qwen-pareja-bar-s42.png`.
+Ejemplos reales: `ejemplos/hoja-C2-ejemplo-zoom16.png` (cara recortada, recomendado); resultados en la carpeta del curso (fuera del repo): `pruebas-modelo/multi-ref/qwen-hoja-A.png`, `qwen-pareja-bar-s42.png`.
 
 **Reglas de armado (y por qué)**
 - Caras grandes y, si hay 2 personas, del mismo tamaño (la rejilla 2 columnas ya lo hace) → el modelo da el mismo peso a ambas.
@@ -161,8 +163,8 @@ Dos personas: `Exactly 2 people, each appears only once: panel 1 is the man, pan
 
 ## 6. Guía para el alumno (guion de coaching)
 Hermes guía paso a paso; no avanza sin respuesta.
-1. **Ficha del personaje** — "¿Nombre, edad (adulto, 21+), cabello, ojos, rasgos únicos (pecas, lunar), estilo de ropa?" → crea `personaje/<nombre>.md` desde `personaje/plantilla.md` (ejemplo: `personaje/ejemplo-valeria.md`).
-2. **10–15 referencias** — "¿Ya tienes una foto base de la cara? ¿Original de IA o de una persona que te dio permiso por escrito?" → genera/elige 10–15 fotos con ropa: frente, 3/4, perfil, distintas luces y escenas.
+1. **Ficha del personaje** — "¿Nombre, edad (adulto, 21+), cabello, ojos, rasgos únicos (pecas, lunar), estilo de ropa?" → copia `personajes/_plantilla/` a `personajes/<slug>/` y llena `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md` y `REGLAS.md` (ejemplo: `personajes/valeria/`). Agrega el personaje y su bot a `personajes/README.md`.
+2. **10–15 referencias** — "¿Ya tienes una foto base de la cara? ¿Original de IA o de una persona que te dio permiso por escrito?" → genera/elige 10–15 fotos con ropa: frente, 3/4, perfil, distintas luces y escenas (guía: `personajes/<slug>/ref/README.md`; las fotos no se suben al repo).
 3. **Cara principal** — "¿Cuál se parece más a como imaginas a tu personaje, frontal y bien iluminada?" → esa es `$REF_PRINCIPAL`.
 4. **Técnica** — "¿Escena genérica o lugar/prenda exactos?" → A0 o C2 (§2).
 5. **Iterar** — "Del 1 al 5, ¿qué tanto se parece? ¿Qué falla: cara, pelo, ojos, fondo?" → una corrección por intento.
@@ -172,7 +174,8 @@ Hermes guía paso a paso; no avanza sin respuesta.
 ## 7. Reglas
 - Este documento y sus ejemplos son **no explícitos**. **Política única de contenido:** en el servidor (Contabo / Cerebro Central) solo vestido, bikini, lencería y sensual **del personaje ficticio**. Desnudo y sexo van a Cloudflare R2 privado, que **todavía no existe**: mientras no exista, no se generan.
 - Solo personajes originales o personas reales **con consentimiento**; siempre adultos. Con una persona real: solo vestido y no sensual (4i).
-- Créditos de licencias: la foto de la Catedral de Hermosillo (`pruebas-modelo/multi-ref/lugar.jpg`) es de Wikimedia Commons, **CC BY 2.0**: dar crédito al autor al mostrarla en el curso.
+- Créditos de licencias: la foto de la Catedral de Hermosillo (carpeta del curso, `pruebas-modelo/multi-ref/lugar.jpg`, fuera del repo) es de Wikimedia Commons, **CC BY 2.0**: dar crédito al autor al mostrarla en el curso.
+- Licencia del modelo: Qwen-Image 2.1 está bajo la **Qwen RESEARCH LICENSE** (solo uso no comercial); ver «Pendientes antes de construir R2» en el README antes de vender o promocionar con estas fotos.
 - Nada de reenviar URLs temporales; nada de `dynamic_space`; nada de reinicios sin OK de el dueño.
 
 

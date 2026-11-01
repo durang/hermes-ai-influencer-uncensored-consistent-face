@@ -27,7 +27,7 @@
 - **Probar Spaces al azar:** gasta cuota y no deja aprendizaje.
 
 ## C2. Hoja de referencias numerada
-- **Qué hace:** junta varias referencias en UNA imagen horizontal (1536x768) con números grandes en la esquina: 1 = cara (panel más grande), 2 = ropa sola sin persona, 3 = lugar. El prompt nombra cada panel. Sirve con modelos que aceptan una sola imagen (Qwen-Image 2.1 Studio).
+- **Qué hace:** junta varias referencias en UNA hoja numerada (la de confirmación conserva la proporción de cada foto, E27; la entrada a Qwen es 3:4 de 1152x1536, E31) con números grandes en la esquina: 1 = cara (panel más grande), 2 = ropa sola sin persona, 3 = lugar. El prompt nombra cada panel. Sirve con modelos que aceptan una sola imagen (Qwen-Image 2.1 Studio).
 - **Cómo:** armar la hoja con PIL (ejemplo: `pruebas-modelo/multi-ref/hoja-3-paneles-v2.png`), "Edit an image", Portrait 3:4, 40 pasos.
 - **Resultado 31-oct (4 pruebas):** la cara se mantuvo bien en las 3 con hoja; el vestido negro salió en todas; el lugar (catedral + kiosco de Hermosillo) salió mucho más fiel que describiéndolo en texto. 1 de 3 (seed 7) mezcló el fondo del restaurante del panel 1 → recortar el panel 1 con poco fondo.
 - **Veredicto:** usar C2 cuando el lugar o la ropa deben ser EXACTOS (lugar real, prenda concreta). Para escenas genéricas, A0 (una referencia + texto) es igual de buena y más simple. La cara pierde un poco de detalle porque el panel es más chico.

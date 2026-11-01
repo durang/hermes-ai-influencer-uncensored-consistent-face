@@ -19,7 +19,8 @@
 ```bash
 git clone git@github.com:<usuario>/hermes-skill-fotos-consistentes.git
 cd hermes-skill-fotos-consistentes
-./install.sh /opt/data/guia-imagen       # en el contenedor del bot
+./install.sh --dry-run /opt/data/guia-imagen   # primero: muestra qué haría, sin tocar nada
+./install.sh /opt/data/guia-imagen             # respalda en respaldos/AAAAMMDD-HHMMSS/ lo que va a pisar y luego instala
 cp /opt/data/guia-imagen/.env.example /opt/data/guia-imagen/.env   # pon HF_TOKEN y TELEGRAM_TOKEN_<NOMBRE> (nunca en git)
 pip install gradio_client pillow
 ```
@@ -30,6 +31,8 @@ pip install gradio_client pillow
 | Tu computadora | lo demás | `local` |
 
 Forzar: `MODO_ENTORNO=servidor|local ./install.sh DESTINO`.
+
+**Respaldo y dry-run:** antes de sobrescribir `skill/`, `tools/`, `docs/` (salvo 04-ERRORES y 05-REGISTRO, que nunca se pisan) o `config.env`, el instalador copia lo existente a `DESTINO/respaldos/AAAAMMDD-HHMMSS/` y al final dice cómo volver. `personajes/`, `.env` y `personaje.env` nunca se sobrescriben. Con `--dry-run` solo imprime cada paso.
 **Política del servidor:** en el disco solo bikini, lencería o sensual sin desnudo. Desnudo/sexual va a Cloudflare R2 privado — **TODO: la subida a R2 aún no está construida**; mientras tanto no se genera en el servidor.
 
 ## Entrevista inicial (crear un personaje)

@@ -1,33 +1,25 @@
-# Contexto: Valeria
+# Valeria — ficha del personaje (pública)
+> Personaje **ficticio y adulto creado con IA**. Esta ficha es pública: no incluye fotos reales, tokens ni IDs.
 
-## Ficha del personaje (ficticio, adulta)
+## Identidad
+| Campo | Valor |
+|---|---|
+| Nombre | Valeria |
+| Edad | 26 años (adulta, personaje ficticio) |
+| Idiomas | es / en (responde en el idioma del fan) |
+| Historia corta | {la define el dueño en la entrevista} |
+
+## Apariencia (para el checklist de parecido)
 | Rasgo | Valor |
 |---|---|
-| Edad | 26 años (adulta, personaje ficticio) |
-| Cabello | Pelirroja, **rizos cobrizos** |
+| Cabello | Pelirroja, **rizos cobrizos** largos con fleco |
 | Piel | **Pecas** en nariz y mejillas |
 | Ojos | **Avellana** (no azules, no grises) |
 | Estatura | 1.72 m |
 | Estilo | Casual, cotidiano, natural |
 
-## Referencias (12 fotos oficiales)
-Box y Cerebro Central: `ref/` junto a esta carpeta. Contenedor: `/opt/data/guia-imagen/personajes/valeria/ref/` (las 12 referencias copiadas el 31-oct).
-
-| Archivo | Rol |
-|---|---|
-| `ref-1-calle.png` | **Cara principal.** Imagen de entrada por defecto (frontal, bien iluminada) |
-| `ref-2-gym.png` | Escena gym (ropa deportiva) |
-| `ref-3-cafe.png` | Escena café |
-| `ref-4-hoja-personaje.png` | Hoja de personaje: comparar rasgos, **no** usar como entrada |
-| `ref-5-hoja-personaje-b.png` | Hoja de personaje B: comparar, **no** usar como entrada |
-| `ref-6-cafe-sueter.png` | Café con suéter, segunda entrada para multi-referencia |
-| `ref-7-gym-selfie.png` | Selfie gym |
-| `ref-8-cafe-lentes.png` | Café con lentes (variación de accesorio) |
-| `ref-9-gym-iphone.png` | Gym, look iPhone |
-| `ref-10-collage-10-selfies.png` | Collage: solo comparación, **no** entrada |
-| `ref-11-carro.png` | Selfie en carro |
-| `ref-12-cena-vino.png` | Cena, maquillada (panel 1 de C2 para escenas de noche) |
-| `ref-13-espejo-cuarto.png` | Añadida por Sergio 31-oct; usar **solo recorte de cara** (`--zoom 1.6`) |
+## Referencias
+Las fotos van en `ref/` **en la instalación**, no en el repo. `ref/README.md` dice cuáles poner y con qué nombre. La cara principal (panel 1) es `ref-1-calle.png` (`REF_PRINCIPAL`).
 
 ## Regla de realismo iPhone X/12
 Toda foto debe parecer tomada con un **iPhone X o 12**:
@@ -38,3 +30,13 @@ Toda foto debe parecer tomada con un **iPhone X o 12**:
 
 ## Checklist de parecido (para el ✅/❌)
 - [ ] Rizos cobrizos  - [ ] Pecas en nariz/mejillas  - [ ] Ojos avellana  - [ ] Misma forma de cara  - [ ] Luz natural, piel con textura
+
+## Telegram (bot propio)
+| Campo | Valor |
+|---|---|
+| Bot | `@{bot_de_valeria}` (lo crea el dueño con @BotFather) |
+| Token | **solo en `.env` como `TELEGRAM_TOKEN_VALERIA`**, nunca aquí |
+| ID del dueño (modo jefe) | **solo en `.env` como `DUENO_TELEGRAM_ID`** |
+
+## Reglas
+Ver [`REGLAS.md`](REGLAS.md) (edad, divulgación de IA, política de contenido, regla legal 4i).

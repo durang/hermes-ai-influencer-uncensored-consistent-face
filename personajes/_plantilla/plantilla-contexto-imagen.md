@@ -1,4 +1,4 @@
-# Contexto: {NOMBRE}  (copia este archivo como personaje/{nombre}.md)
+# Contexto: {NOMBRE}  (resumen corto para el modo imagen; la ficha completa es `PERSONAJE.md` de esta carpeta)
 
 | Rasgo | Valor |
 |---|---|

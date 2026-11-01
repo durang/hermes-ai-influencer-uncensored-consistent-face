@@ -3,3 +3,7 @@ config.env
 salidas/
 *.log
 __pycache__/
+# Fotos de referencia: viven en la instalación, nunca en el repo
+personajes/*/ref/*
+!personajes/*/ref/README.md
+!personajes/*/ref/.gitkeep

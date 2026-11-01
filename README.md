@@ -85,6 +85,27 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 ### Política única de contenido
 En el servidor (Contabo / Cerebro Central): **vestido, bikini, lencería y sensual, solo del personaje ficticio**. **Desnudo y sexo van a Cloudflare R2, que todavía no existe**: mientras no exista, no se generan.
 
+## Pendientes antes de construir R2 (revisión del 1-nov-2026)
+> **No frena lo vestido** en lo que toca a las reglas de contenido. **Ojo con la licencia** (punto 3): esa sí afecta cualquier uso comercial, vestido incluido.
+
+1. **Política de contenido de Hugging Face** (https://huggingface.co/content-policy, vigente desde el 10-abr-2025):
+   - Prohíbe *"Sexual Content used for harassment, bullying, or created without explicit consent"* y *"Underage nudity or any sexual Content involving minors"*.
+   - Pide marcar el contenido adulto como *"Not For All Audiences"* (NFAA).
+   - No trata directamente la desnudez adulta ni los deepfakes en Spaces de terceros.
+   - Consecuencia: **nada sexual con caras reales** (regla 4i) y nada que sugiera minoría de edad.
+2. **El Space `assembledchaos/qwen-image-2-1-studio`** (leído de su README y su `app.py`):
+   - Es un Space **comunitario, no oficial**. Corre **`abenzerps/Qwen-Image-2.1-Uncensored-GGUF`** (Q4_K_M), una cuantización "Uncensored" de terceros, y el código **no tiene filtro de seguridad**.
+   - No publica términos de uso propios.
+   - Usa la cuota diaria ZeroGPU de quien lo llama.
+   - Las fotos subidas quedan en el servidor del Space hasta 24 h (caché de Gradio). Ojo con subir caras de personas reales.
+   - Puede cambiar o desaparecer sin aviso, así que conviene fijar la revisión o tener un Space propio.
+3. **Licencia del modelo: Qwen RESEARCH LICENSE AGREEMENT** (`Qwen/Qwen-Image-2.1`, publicada el 20-sep-2026):
+   - Solo permite uso **NO comercial ("research or evaluation purposes only")**. Para uso comercial hay que pedir una licencia aparte a `model-business@notice.qwencloud.com`.
+   - Si las salidas se usan para entrenar o mejorar un modelo que se distribuye (por ejemplo, una LoRA de Valeria), hay que mostrar *"Built with Qwen"*.
+   - Ley aplicable: China; tribunales de Hangzhou.
+   - **Vender o promocionar con estas fotos (Fanvue, redes, el curso) es uso comercial**: hace falta la licencia comercial o cambiar a un modelo con licencia comercial. Esto lo decide Sergio con su abogado.
+4. **Antes de construir R2 (desnudo y sexo):** licencia comercial resuelta; un modelo y un proveedor cuyas reglas permitan ese contenido (este Space público no es el lugar); verificación de edad del lado del fan; etiqueta de IA; **cero caras reales** (4i); términos de Cloudflare revisados; revisión legal.
+
 ## Ejemplo con Valeria
 ```bash
 R=personajes/valeria/ref
@@ -121,6 +142,8 @@ Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos 
 - **Image mode:** follows `skill/SKILL.md`: confirm references + model, wait for OK, generate, validate, deliver.
 
 **Photo rules:** panel 1 is always the character's saved face from `personajes/<name>/ref/` (never a garment); client images are extra panels with a role (ropa/objeto/lugar/persona) named in the prompt ("panel 2 = shirt to wear"); no saved face = ask for it before generating; preview shows face + garment; "several" = 3 (max 4) with distinct poses and seeds; count received photos; keep each person's outfit; place in its own panel; no stretching; Qwen gets a 3:4 1152x1536 2-column grid with no gray padding; prompt starts with `Exactly N people, each appears only once`; one single scene, reject collages/duplicates/wrong count, up to 3 attempts with a new seed; deliver as many photos as requested, each validated; Qwen 2.1 only, no backup model (rule 4g); say "faces OK" only if verified; the only path is `imagen_kontext` → `imagen_confirmar` (doc alias `imagen_qwen21`); check the exact API error before claiming quota. "Use one photo as-is" only when that photo IS the character's face. **Legal rule (4i):** sensual content (bikini, lingerie) and R2 only with the fictional character; a real third party's face only clothed and non-sensual, with consent, never from photos a fan sends (the preview rejects it with a neutral message). **Content policy:** on the server, clothed/bikini/lingerie/sensual of the fictional character only; nudity and sex go to R2, which does not exist yet.
+
+**Pending before building R2:** Hugging Face content policy forbids sexual content created without explicit consent and any sexual content involving minors; the Space `assembledchaos/qwen-image-2-1-studio` is a community Space running a third-party "Uncensored" GGUF with no safety filter; the model is under the **Qwen RESEARCH LICENSE (non-commercial only)**: commercial use (selling or promoting with these photos) needs a separate license from Qwen. See the Spanish section for details.
 
 **3-session class:** (1) setup, permissions, installation; (2) character interview + modes; (3) consistent-photo workflow + one Telegram bot per character.
 

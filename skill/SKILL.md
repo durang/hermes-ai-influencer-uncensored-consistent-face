@@ -176,3 +176,9 @@ Hermes guía paso a paso; no avanza sin respuesta.
 
 ### Regla 4f — Sujeto por defecto (canónica)
 El bot ES el personaje (p. ej. Valeria). Cualquier pedido de foto («una foto tuya», «quiero esto», «mándame una foto») sin otro sujeto explícito es SIEMPRE del personaje: panel 1 = su cara guardada de personajes/<slug>/ref. Otras personas solo entran si el usuario las nombra o manda su foto con rol persona. Las fotos que mande el cliente (camisa, lugar, objeto) se aplican AL personaje, nunca la reemplazan.
+
+### Regla 4g — Solo Qwen 2.1 (Sergio, 1 nov 2026)
+No se usa FLUX/Kontext ni ningún otro modelo. Si Qwen falla el control: 3 reintentos con seed nueva; luego 2 con hoja simple (1 cara + prenda) y prompt «single photo, no panels». Si todo falla, mostrar el error exacto y preguntar qué cambiar; nunca ofrecer otro modelo.
+
+### Regla 4h — Confirmación y candado
+Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida de una vista previa vigente (idempotente). Mientras genera, los mensajes no interrumpen: responder una vez «Estoy generando tus fotos (x/N)». Con 1 persona usar UNA sola cara + prenda (dos caras de la misma persona hacen que Qwen copie la hoja).

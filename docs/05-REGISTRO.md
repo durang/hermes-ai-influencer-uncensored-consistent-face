@@ -9,8 +9,8 @@ fecha_hora (UTC-7) | petición | tipo | técnica | modelo | ref | seed | guidanc
 
 ## Ejemplos
 ```
-2026-10-31 19:10 | café con suéter | cambio-escena-ropa | A | Kontext dev | ref-1-calle | 42 | 2.5/28 | 1 | kontext-cafe-01.png | ❌ cara delgada, mira abajo | no | quitar "holding a phone"
-2026-10-31 19:14 | café con suéter | cambio-escena-ropa | A | Kontext dev | ref-1-calle | 42 | 2.5/28 | 2 | kontext-cafe-02.png | ✅✅✅✅✅ | sí (ok:true) | prompt "change only background and clothing"
+2026-10-31 19:10 | café con suéter | escena nueva | A0 | Qwen 2.1 | ref-1-calle | 42 | 40 | 1 | qwen-cafe-01.png | ❌ mira abajo, aparece un teléfono | no | quitar "holding a phone"
+2026-10-31 19:14 | café con suéter | escena nueva | A0 | Qwen 2.1 | ref-1-calle | 42 | 40 | 2 | qwen-cafe-02.png | ✅✅✅✅✅ | sí (ok:true) | "iPhone 12 front-camera photo"
 ```
 
 ## Para el curso

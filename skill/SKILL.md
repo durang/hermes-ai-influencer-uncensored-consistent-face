@@ -1,6 +1,6 @@
 ---
 name: fotos-modelo-consistente
-description: Úsalo cuando el dueño (modo jefe) o un alumno pida una foto de su personaje con la misma cara que las referencias, cuando haya que armar una hoja de referencias numerada, calibrar un modelo nuevo, registrar un error de imagen o guiar a un alumno a crear el set de fotos de su modelo. Solo contenido SFW con ropa.
+description: Úsalo cuando el dueño (modo jefe) o un alumno pida una foto de su personaje con la misma cara que las referencias, cuando haya que armar una hoja de referencias numerada, calibrar un modelo nuevo, registrar un error de imagen o guiar a un alumno a crear el set de fotos de su modelo. Contenido del personaje ficticio: vestido, bikini, lencería o sensual en el servidor; nada de desnudo ni sexo (R2 aún no existe).
 ---
 
 # Skill: fotos de modelo consistentes (Hermes)
@@ -13,16 +13,20 @@ source $GUIA/config.env        # lo escribe install.sh (GUIA, ALMACEN_*, PERSONA
 PROC=$GUIA/skill
 REFS=$GUIA/personajes/$PERSONAJE_SLUG/ref   # $REF_PRINCIPAL = cara guardada (panel 1 SIEMPRE)
 SALIDAS=$ALMACEN_SALIDAS          # AAAAMMDD-HHMM-escena-intento.png
-TOOLS=$GUIA/tools                  # armar_hoja.py, qwen21_generar.py
+TOOLS=$GUIA/tools                  # armar_hoja.py (qwen21_generar.py: solo calibración manual en el host, nunca el bot)
 REGISTRO=$GUIA/docs/05-REGISTRO.md      # bitácora automática (metadatos)
 ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 ```
 | Herramienta | Estado | Uso |
 |---|---|---|
-| `imagen_qwen21` (plugin) / `python3 $TOOLS/qwen21_generar.py` | Principal. Si el plugin aún no existe, usa el script | Generar (A0 y C2) |
-| `imagen_kontext(ref, prompt, guidance=2.5, steps=28, seed=42)` | Respaldo instalado | Re-vestir una foto existente / si Qwen falla |
-| `python3 $TOOLS/armar_hoja.py` | Listo | Hoja numerada C2 |
-| `imagen_enviar(ruta_local)` | Instalado | Mandar a Telegram (siempre archivo local) |
+| `imagen_kontext(referencias, tipos, …)` | **Paso 1 — NO genera.** Arma la hoja (panel 1 = cara guardada), manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» y espera el OK | Confirmación |
+| `imagen_confirmar(id, prompt)` | **Paso 2 — genera con Qwen-Image 2.1 Studio** solo si el último mensaje verificado del dueño es una confirmación válida (4h). Arma el pie de foto con la config real, registra y borra | Generar (A0 y C2) |
+| `imagen_cancelar()` | Cancela la vista previa y borra temporales | Cancelar |
+| `python3 $TOOLS/armar_hoja.py` | Lo usa el plugin; también a mano (curso) | Hoja numerada C2 |
+| `imagen_enviar(ruta)` | Solo reenvía archivos producidos por `imagen_confirmar` | Reenviar |
+| `tools/qwen21_generar.py` | **El bot NO lo usa** (está bloqueado en la terminal). Solo pruebas manuales de calibración en el host | Calibración |
+
+> **Nombres reales vs. alias.** En la documentación se habla de **`imagen_qwen21`** porque la generación es con Qwen 2.1: es un **alias conceptual** de la pareja real del plugin **`imagen_kontext` → `imagen_confirmar`**. El nombre interno `imagen_kontext` es histórico (el plugin nació con otro modelo) y se conserva por compatibilidad; hoy solo prepara la confirmación y genera únicamente con Qwen 2.1 (regla 4g). Si un mensaje o doc dice `imagen_qwen21`, llama a `imagen_kontext` y luego a `imagen_confirmar`.
 | `dynamic_space` | **PROHIBIDO para imágenes** | (E1) |
 
 
@@ -45,18 +49,18 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 **Después de generar**
 8. **UNA sola escena** (E30). Rechaza la salida si es collage, copia de la hoja, tiene costuras/bordes/barras, la misma persona duplicada o un número de personas distinto de N. Reintenta con **seed nueva**, hasta **3 intentos**. Si el 3.º falla, NO mandes foto: manda el mensaje neutral.
-9. **FLUX Kontext solo como respaldo y solo para 1 persona** (recibe una sola imagen). Con 2+ personas el respaldo es Qwen con otra seed. Usarlo requiere OK del dueño.
+9. **Solo Qwen 2.1, sin modelo de respaldo** (4g). Si falla el control: reintentos con seed nueva y luego hoja simple; si todo falla, error exacto y preguntar qué cambiar.
 10. **«Caras OK» solo si se verificó** con el detector. Si no hubo verificación, di «no verificado».
 11. **Una sola imagen de salida**: un archivo, sin duplicar ni apilar.
 
 **Herramientas y errores**
-12. **Solo la herramienta Qwen 2.1** (`imagen_qwen21` / `qwen21_generar.py`, 40 pasos). Nunca `dynamic_space` ni el navegador. Antes de hablar de cuota, revisa el **error exacto** de la API (en el log/05-REGISTRO) y confirma que se usó HF_TOKEN.
+12. **Única vía: `imagen_kontext` → `imagen_confirmar`** (alias `imagen_qwen21`; Qwen 2.1, 40 pasos). Nunca `dynamic_space`, el navegador ni scripts por terminal (bloqueado en código, E11/E12). Antes de hablar de cuota, revisa el **error exacto** de la API (en el log/05-REGISTRO) y confirma que se usó HF_TOKEN.
 13. **Al cliente nunca le hables de token, GPU, API, cuota ni nombres de modelos** (E29). Mensaje neutral: «Tuve un problema al generar la foto, lo intento de nuevo en un momento.» El error exacto va solo al registro y, si lo pide, al dueño en modo jefe.
 
 **Almacenamiento**
 14. Respeta `ALMACEN_ADULTO` de `config.env`:
-    - **Servidor (Contabo / Cerebro Central):** en el disco del servidor solo bikini, lencería o sensual sin desnudo.
-    - **Desnudo / contenido sexual:** va a **Cloudflare R2 privado** — **TODO: aún no construido**; mientras no exista, no se genera ni se guarda en el servidor.
+    - **Servidor (Contabo / Cerebro Central):** vestido, bikini, lencería y sensual, **solo del personaje ficticio** (4i).
+    - **Desnudo / contenido sexual:** va a **Cloudflare R2 privado** — **todavía no existe**; mientras no exista, no se genera ni se guarda. Antes de construirlo: ver «Pendientes antes de R2» en el README.
     - **Computadora propia:** local.
     El repo, sus prompts y ejemplos son siempre no explícitos.
 
@@ -70,18 +74,18 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 ## 2. Flujo obligatorio con confirmaciones
 **Reglas si/entonces**
-- SI el dueño manda **1 foto** → ENTONCES técnica A0 con esa foto como referencia.
-- SI manda **2–6 fotos** → ENTONCES hoja C2 en ese orden (panel 1 = la primera).
+- SI el dueño manda **1 foto que ES la cara del personaje** (él lo confirma) → ENTONCES A0 con esa foto tal cual.
+- SI manda **cualquier otra foto** (ropa, objeto, lugar u otra persona) → ENTONCES es un **panel extra con rol**; el panel 1 sigue siendo la cara guardada (4b/4f) → C2.
 - SI no manda foto → ENTONCES A0 con `$REFS/$REF_PRINCIPAL`.
-- SI pide un lugar real o una prenda exacta → ENTONCES C2 (persona + prenda + lugar).
-- SI pide solo cambiar ropa de una foto existente del personaje → ENTONCES `imagen_kontext`.
-- SI la petición no es SFW en el canal de jefe sin modo explícito acordado, o usa a una persona real sin consentimiento → ENTONCES no generes y explica por qué.
+- SI pide un lugar real o una prenda exacta → ENTONCES C2 (cara guardada + prenda + lugar).
+- SI pide cambiar la ropa de una foto existente del personaje → ENTONCES C2 con esa ropa como panel extra (no hay otro modelo, 4g).
+- SI la petición es desnudo o sexo (R2 aún no existe), o usa a una persona real sin consentimiento, o lo sensual va con una cara real (4i) → ENTONCES no generes y explica la razón real.
 
 **Mensaje de confirmación (Telegram, exacto)** — enviar con la hoja/referencias adjuntas:
 ```
 📸 Voy a generar: {resumen de la petición}
 🧩 Referencias: {$REF_PRINCIPAL-calle.png | hoja C2: 1=…, 2=…, 3=…}
-🤖 Modelo: {Qwen-Image 2.1 Studio | Kontext dev} · seed {42} · {40 pasos, Portrait 3:4}
+🤖 Modelo: Qwen-Image 2.1 Studio · seed {42} · {40 pasos, Portrait 3:4}
 ✍️ Prompt: "{prompt}"
 ¿Le doy? Responde OK, o dime qué cambio (referencia, modelo o prompt).
 ```
@@ -89,7 +93,7 @@ SI el dueño responde OK/sí/dale → generar. SI cambia algo → aplicar y volv
 
 **Pasos**
 1. Confirmación (arriba) → esperar OK.
-2. Generar: `HF_TOKEN=$HF_TOKEN python3 $TOOLS/qwen21_generar.py <ref|hoja> "<prompt>" $SALIDAS/<nombre>.png`
+2. Generar: `imagen_confirmar(id, prompt)` tras la confirmación válida (nunca un script por terminal ni tokens en la línea de comando).
 3. QC automático: archivo existe, >200 KB, ~864×1152.
 4. Enviar con `imagen_enviar` y el texto: `¿Es {PERSONAJE_NOMBRE}? Marca ✅ o ❌ (y qué falla: cara, pelo, pecas, ojos, fondo).`
 5. SI ✅ → registrar y terminar. SI ❌ → aplicar UNA corrección de la tabla del §5 y reintentar.
@@ -100,20 +104,18 @@ SI el dueño responde OK/sí/dale → generar. SI cambia algo → aplicar y volv
 |---|---|
 | Error de red / cola | El script reintenta 3 veces (20/40/80 s) |
 | Cuota agotada (código 3) | Mostrar el error exacto de la API y avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space |
-| Qwen falla 3 veces | Preguntar: `Qwen no responde. ¿Uso Kontext de respaldo?` |
+| Qwen falla 3 veces | 2 intentos más con hoja simple (1 cara + prenda, «single photo, no panels»); si falla, mostrar el error exacto y preguntar qué cambiar. Nunca ofrecer otro modelo (4g) |
 | ❌ de el dueño | Máx. 3 intentos de calidad, una variable por intento; al 3.º avisa el motivo |
 
 ## 3. Calibración
 **Ranking (pruebas 31-oct-2026)**
 1. **Qwen-Image 2.1 Studio** (`assembledchaos/qwen-image-2-1-studio`) — principal. Cara más fiel. Piel algo lisa, 1 MP (falta upscaler para HD real).
-2. **FLUX.1 Kontext dev** (`black-forest-labs/FLUX.1-Kontext-Dev`) — respaldo. Excelente para re-vestir una foto existente; guidance >3 cambia la cara.
 3. Qwen-Image-Edit 2509/2511 — Spaces oficiales con TypeError (31-oct). No usar hasta re-probar.
-4. PuLID-FLUX — malo: "otra mujer parecida", ojos azules.
+4. PuLID — malo: "otra mujer parecida", ojos azules. (Otros modelos de edición probados el 31-oct quedaron retirados por la regla 4g.)
 
 **Parámetros (copiar)**
 ```
 QWEN21:  modo="Edit an image" steps=40 seed=42 randomize=False aspect="Portrait · 3:4" (o "Square · 1:1") → usar r[1]
-KONTEXT: guidance=2.5 steps=28 seed=42   (rango seguro 2.0–2.5)
 HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 columnas sin relleno; --zoom 1.3–1.6 opcional en panel 1
 ```
 **Calibrar un modelo nuevo**
@@ -168,8 +170,8 @@ Hermes guía paso a paso; no avanza sin respuesta.
 7. **Set para LoRA (15–30)** — "¿Tenemos variedad de ángulos, luces y ropa? ¿Todas PNG a tamaño completo?" → al llegar a 15–30 ✅, listo para entrenar.
 
 ## 7. Reglas
-- Este documento y sus ejemplos son **solo SFW, con ropa**.
-- Solo personajes originales o personas reales **con consentimiento**; siempre adultos.
+- Este documento y sus ejemplos son **no explícitos**. **Política única de contenido:** en el servidor (Contabo / Cerebro Central) solo vestido, bikini, lencería y sensual **del personaje ficticio**. Desnudo y sexo van a Cloudflare R2 privado, que **todavía no existe**: mientras no exista, no se generan.
+- Solo personajes originales o personas reales **con consentimiento**; siempre adultos. Con una persona real: solo vestido y no sensual (4i).
 - Créditos de licencias: la foto de la Catedral de Hermosillo (`pruebas-modelo/multi-ref/lugar.jpg`) es de Wikimedia Commons, **CC BY 2.0**: dar crédito al autor al mostrarla en el curso.
 - Nada de reenviar URLs temporales; nada de `dynamic_space`; nada de reinicios sin OK de el dueño.
 
@@ -182,3 +184,9 @@ No se usa FLUX/Kontext ni ningún otro modelo. Si Qwen falla el control: 3 reint
 
 ### Regla 4h — Confirmación y candado
 Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida de una vista previa vigente (idempotente). Mientras genera, los mensajes no interrumpen: responder una vez «Estoy generando tus fotos (x/N)». Con 1 persona usar UNA sola cara + prenda (dos caras de la misma persona hacen que Qwen copie la hoja).
+
+### Regla 4i — Legal (dura; Sergio + AInfluencer, 1 nov 2026)
+1. **Lo sensual (bikini, lencería, sensual) y todo lo que vaya a R2 solo con el personaje ficticio.** Nunca con la cara de una persona real (ni siquiera la del dueño).
+2. **Rol `persona` con la cara de un tercero real:** solo vale **vestido y no sensual**, y solo con su permiso (el dueño o quien él confirme).
+3. **Nunca con fotos de terceros que mande un fan.** Si un fan manda una cara real, la vista previa la rechaza con un mensaje neutral, sin explicar infraestructura: «No puedo usar fotos de otras personas, pero si quieres te mando una mía 😉». No se genera nada.
+4. **Por qué:** combinar la cara de alguien real con contenido sensual es imagen íntima no consentida (TAKE IT DOWN Act en EE. UU., Ley Olimpia en México) y viola los términos de Fanvue y la política de contenido de Hugging Face («Sexual Content… created without explicit consent»).

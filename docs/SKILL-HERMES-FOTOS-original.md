@@ -5,6 +5,8 @@ description: Úsalo cuando Sergio (modo jefe) o un alumno pida una foto de Valer
 
 # Skill: fotos de modelo consistentes (Hermes)
 
+> ⚠️ **Documento histórico (v1, 31-oct-2026). NO vigente:** la versión actual es `skill/SKILL.md` (solo Qwen 2.1, regla 4g; herramientas reales `imagen_kontext` → `imagen_confirmar`). Las menciones al modelo de respaldo anterior se reemplazaron por «[retirado]».
+
 > Material del curso **Secret Fans Academia IA**. Este skill es el "cerebro operativo" de Hermes para imágenes. Los detalles viven en `01-PIPELINE.md` … `05-REGISTRO.md`; aquí está lo que Hermes **ejecuta**.
 
 ## 0. Rutas y herramientas (copiar tal cual)
@@ -19,8 +21,8 @@ ERRORES=$PROC/04-ERRORES.md        # E10+ automáticos
 ```
 | Herramienta | Estado | Uso |
 |---|---|---|
-| `imagen_qwen21` (plugin) / `python3 $TOOLS/qwen21_generar.py` | Principal. Si el plugin aún no existe, usa el script | Generar (A0 y C2) |
-| `imagen_kontext(ref, prompt, guidance=2.5, steps=28, seed=42)` | Respaldo instalado | Re-vestir una foto existente / si Qwen falla |
+| [retirado] — hoy: `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`) | Ver `skill/SKILL.md` | Generar (A0 y C2) |
+| [retirado] modelo de respaldo | — | — |
 | `python3 $TOOLS/armar_hoja.py` | Listo | Hoja numerada C2 |
 | `imagen_enviar(ruta_local)` | Instalado | Mandar a Telegram (siempre archivo local) |
 | `dynamic_space` | **PROHIBIDO para imágenes** | (E1) |
@@ -39,14 +41,14 @@ ERRORES=$PROC/04-ERRORES.md        # E10+ automáticos
 - SI manda **2–6 fotos** → ENTONCES hoja C2 en ese orden (panel 1 = la primera).
 - SI no manda foto → ENTONCES A0 con `$REFS/ref-1-calle.png`.
 - SI pide un lugar real o una prenda exacta → ENTONCES C2 (persona + prenda + lugar).
-- SI pide solo cambiar ropa de una foto existente de Valeria → ENTONCES `imagen_kontext`.
+- [retirado]
 - SI la petición no es SFW en el canal de jefe sin modo explícito acordado, o usa a una persona real sin consentimiento → ENTONCES no generes y explica por qué.
 
 **Mensaje de confirmación (Telegram, exacto)** — enviar con la hoja/referencias adjuntas:
 ```
 📸 Voy a generar: {resumen de la petición}
 🧩 Referencias: {ref-1-calle.png | hoja C2: 1=…, 2=…, 3=…}
-🤖 Modelo: {Qwen-Image 2.1 Studio | Kontext dev} · seed {42} · {40 pasos, Portrait 3:4}
+🤖 Modelo: {Qwen-Image 2.1 Studio} · seed {42} · {40 pasos, Portrait 3:4}
 ✍️ Prompt: "{prompt}"
 ¿Le doy? Responde OK, o dime qué cambio (referencia, modelo o prompt).
 ```
@@ -54,7 +56,7 @@ SI Sergio responde OK/sí/dale → generar. SI cambia algo → aplicar y volver 
 
 **Pasos**
 1. Confirmación (arriba) → esperar OK.
-2. Generar: `HF_TOKEN=$HF_TOKEN python3 $TOOLS/qwen21_generar.py <ref|hoja> "<prompt>" $SALIDAS/<nombre>.png`
+2. [retirado: el bot ya no corre scripts por terminal] — hoy: `imagen_confirmar(id, prompt)` tras la confirmación.
 3. QC automático: archivo existe, >200 KB, ~864×1152.
 4. Enviar con `imagen_enviar` y el texto: `¿Es Valeria? Marca ✅ o ❌ (y qué falla: cara, pelo, pecas, ojos, fondo).`
 5. SI ✅ → registrar y terminar. SI ❌ → aplicar UNA corrección de la tabla del §5 y reintentar.
@@ -65,20 +67,20 @@ SI Sergio responde OK/sí/dale → generar. SI cambia algo → aplicar y volver 
 |---|---|
 | Error de red / cola | El script reintenta 3 veces (20/40/80 s) |
 | Cuota agotada (código 3) | Avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space |
-| Qwen falla 3 veces | Preguntar: `Qwen no responde. ¿Uso Kontext de respaldo?` |
+| Qwen falla 3 veces | [retirado: ver regla 4g en skill/SKILL.md] |
 | ❌ de Sergio | Máx. 3 intentos de calidad, una variable por intento; al 3.º avisa el motivo |
 
 ## 3. Calibración
 **Ranking (pruebas 31-oct-2026)**
 1. **Qwen-Image 2.1 Studio** (`assembledchaos/qwen-image-2-1-studio`) — principal. Cara más fiel. Piel algo lisa, 1 MP (falta upscaler para HD real).
-2. **FLUX.1 Kontext dev** (`black-forest-labs/FLUX.1-Kontext-Dev`) — respaldo. Excelente para re-vestir una foto existente; guidance >3 cambia la cara.
+2. [retirado]
 3. Qwen-Image-Edit 2509/2511 — Spaces oficiales con TypeError (31-oct). No usar hasta re-probar.
-4. PuLID-FLUX — malo: "otra mujer parecida", ojos azules.
+4. PuLID — malo: "otra mujer parecida", ojos azules.
 
 **Parámetros (copiar)**
 ```
 QWEN21:  modo="Edit an image" steps=40 seed=42 randomize=False aspect="Portrait · 3:4" (o "Square · 1:1") → usar r[1]
-KONTEXT: guidance=2.5 steps=28 seed=42   (rango seguro 2.0–2.5)
+[retirado]
 HOJA C2: 1536x768, panel cara 1.4x, --zoom 1.3–1.6
 ```
 **Calibrar un modelo nuevo**

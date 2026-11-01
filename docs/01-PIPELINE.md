@@ -13,13 +13,12 @@ Regla: **no se avanza si la compuerta no da ✅.** Máximo de reintentos de cali
 ## Paso 2 — Elegir técnica y modelo
 | Tipo | Técnica (02-TECNICAS) | Modelo | Herramienta |
 |---|---|---|---|
-| escena nueva (default) | A0. Qwen 2.1 Studio | Qwen-Image 2.1 Studio | `imagen_qwen21` o `python3 /opt/data/guia-imagen/procedimiento-imagen/tools/qwen21_generar.py` |
-| re-vestir foto existente | A. Edición Kontext | FLUX.1 Kontext [dev] | `imagen_kontext` (respaldo) |
-| pose-nueva (leve) | B. Pose nueva | Kontext dev con prompt de pose | `imagen_kontext` |
-| lugar/prenda exactos o varias fotos | C2. Hoja numerada | Qwen 2.1 Studio | `tools/armar_hoja.py` + `qwen21_generar.py` |
+| escena nueva (default) | A0. Qwen 2.1 Studio | Qwen-Image 2.1 Studio | `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`) |
+| pose nueva (leve) | B. Pose nueva | Qwen-Image 2.1 Studio con instrucción de pose | `imagen_kontext` → `imagen_confirmar` |
+| lugar/prenda exactos, ropa nueva o varias fotos | C2. Hoja numerada | Qwen-Image 2.1 Studio | `imagen_kontext` (arma la hoja con `tools/armar_hoja.py`) → `imagen_confirmar` |
 | cualquiera, cuando exista | D. LoRA Valeria | LoRA propia | (futuro) |
 
-**Prohibido:** probar Spaces al azar con `dynamic_space`. Solo el modelo de la tabla.
+**Prohibido:** `dynamic_space`, el navegador, scripts por terminal y cualquier modelo que no sea Qwen 2.1 (4g).
 **Compuerta 2:** ✅ técnica + modelo + herramienta anotados. ❌ La herramienta no existe → avisa, no improvises.
 
 ## Paso 3 — Cargar la referencia y confirmar que existe
@@ -29,20 +28,19 @@ Regla: **no se avanza si la compuerta no da ✅.** Máximo de reintentos de cali
 **Compuerta 3:** ✅ "Referencia cargada: ref-1-calle.png (X KB)". ❌ No existe → 04-ERRORES §E2.
 
 ## Paso 4 — Armar el prompt con la plantilla
-- Usa la plantilla de `03-PROMPTS.md`: bloque de identidad + ropa + escena + cámara + luz.
-- Parámetros Kontext: guidance **2.5**, pasos **28**, seed **42** (fija para comparar).
+- Usa la plantilla de `03-PROMPTS.md` (A0: «Keep her face exactly the same…»; C2: «Exactly N people…» + cada panel por número).
+- Parámetros Qwen 2.1: Edit an image, **Portrait · 3:4**, **40** pasos, seed **42** (fija para comparar).
 
-**Compuerta 4:** ✅ los 5 bloques presentes y la frase "keep her face … exactly identical". ❌ Falta un bloque → complétalo.
+**Compuerta 4:** ✅ prompt según la técnica (en C2, cada panel nombrado). ❌ → complétalo.
 
 ## Paso 4b — Confirmar con Sergio (obligatorio)
 Manda el mensaje exacto de `SKILL-HERMES-FOTOS.md` §2 (referencias + modelo + prompt) con la hoja/referencia adjunta. **Sin OK no se genera.**
 **Compuerta 4b:** ✅ Sergio respondió OK. ❌ pidió cambio → vuelve al Paso 3/4.
 
 ## Paso 5 — Generar y confirmar el archivo de salida
-- Llama a `imagen_kontext(ref, prompt, guidance=2.5, steps=28, seed=42)`.
-- Guarda en `/opt/data/salidas/AAAAMMDD-HHMM-escena-intento.png`.
+- Tras la confirmación válida, `imagen_confirmar(id, prompt)` genera con Qwen 2.1 (la salida vive en `/tmp`, se envía y se borra).
 
-**Compuerta 5:** ✅ archivo existe, > 200 KB, ~880x1168. ❌ Error / cuota agotada → 04-ERRORES §E1, §E5.
+**Compuerta 5:** ✅ `ok:true`, ~864x1152. ❌ Error → el error exacto ya le llegó al dueño (§E5 si es cuota); preguntar qué cambiar, sin cambiar de modelo.
 
 ## Paso 6 — Control de calidad contra las referencias
 Revisa la lista (con modelo de visión cuando exista; mientras, se pide confirmación a Sergio):
@@ -81,11 +79,11 @@ Si falla, cambia **una sola cosa** por intento:
 ## Ejemplo completo (real, 31-oct)
 1. Petición: "Valeria con vestido negro frente a la catedral de Hermosillo".
 2. Tipo: lugar exacto → C2.
-3. `python3 tools/armar_hoja.py /opt/data/salidas/hoja-catedral.png --cara personajes/valeria/ref/ref-12-cena-vino.png --extra ropa:vestido-negro.png --lugar lugar.jpg`
-4. Prompt C2 de `03-PROMPTS.md`. 4b. Confirmación → OK.
-5. `qwen21_generar.py hoja-catedral.png "<prompt>" salidas/20261031-2010-catedral-1.png --seed 42`
+3. `imagen_kontext(referencias=["foto-1", "foto-2"], tipos=["ropa", "lugar"])` → el plugin arma la hoja (panel 1 = cara de `personajes/valeria/ref/`, 2 = vestido, 3 = catedral) y manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…».
+4. Prompt C2 de `03-PROMPTS.md`. 4b. Sergio responde «ok» (verificado por el sistema).
+5. `imagen_confirmar(id, "<prompt>")` → Qwen 2.1, seed 42; el pie de foto sale de la config real.
 6. Sergio ✅ (seed 42). Seed 7 coló el restaurante → regla "recortar panel 1".
-7. `imagen_enviar` → ok:true. 8. Línea en el registro.
+7. La foto ya llegó (imagen_confirmar la manda y la borra). 8. La fila en 05-REGISTRO es automática.
 Evidencia: `../pruebas-modelo/multi-ref/qwen-hoja-A.png` (✅), `qwen-hoja-C.png`.
 
 ## Checklist rápido
@@ -96,7 +94,7 @@ Evidencia: `../pruebas-modelo/multi-ref/qwen-hoja-A.png` (✅), `qwen-hoja-C.png
 ## Solución de problemas
 | Síntoma | Causa probable | Haz |
 |---|---|---|
-| `ERROR E2` del script | ruta mal / archivo vacío | `ls -l /opt/data/guia-imagen/personajes/<nombre>/ref/` |
+| `ERROR SIN CARA` / referencia no encontrada | falta la cara guardada | `ls -l /opt/data/guia-imagen/personajes/<nombre>/ref/` y pedir la foto de cara |
 | Código de salida 3 | cuota ZeroGPU | avisar hora de reintento (E5) |
-| Código 2 | Space caído | preguntar si usar Kontext |
+| Space caído | error del Space | mostrar el error exacto y preguntar qué cambiar; no ofrecer otro modelo (4g) |
 | Imagen con paneles/números | prompt sin cierre | añadir "No panels, no numbers, no text" |

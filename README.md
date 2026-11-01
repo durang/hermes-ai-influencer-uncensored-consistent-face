@@ -11,7 +11,7 @@
 | `personajes/_plantilla/` | Salida de la entrevista: `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `personaje.env.example`, `ref/` |
 | `personajes/valeria/` | Ejemplo completo con Valeria |
 | `tools/armar_hoja.py` | Hoja numerada (proporción original) + entrada Qwen 3:4 1152x1536 en 2 columnas sin relleno (`--qwen34`), `--lugar`, `--recibidas N` |
-| `tools/qwen21_generar.py` | Genera con Qwen-Image 2.1 (API, HF_TOKEN, 40 pasos) |
+| `tools/qwen21_generar.py` | Prueba manual de Qwen-Image 2.1 en el host (calibración). **El bot no lo usa** |
 | `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro, changelog |
 | `install.sh` | Instala y detecta el entorno |
 
@@ -65,8 +65,22 @@ Cada personaje tiene **su propio bot de Telegram** (`TELEGRAM_TOKEN_VALERIA`, `T
 6. El prompt empieza con `Exactly N people, each appears only once` y dice qué panel es quién.
 7. Una sola escena: se rechaza collage, copia de la hoja, persona duplicada o conteo distinto; hasta 3 intentos con seed nueva.
 8. «Varias» fotos = 3 (máx. 4) con poses y seeds distintas; cada una pasa el control de número de personas.
-9. FLUX Kontext solo de respaldo y solo con 1 persona. «Caras OK» solo si se verificó.
-10. Solo la herramienta Qwen 2.1; nunca `dynamic_space` ni navegador; revisa el error exacto antes de hablar de cuota.
+9. **Solo Qwen 2.1** (regla 4g), sin modelo de respaldo. «Caras OK» solo si se verificó.
+10. Única vía: `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`); nunca `dynamic_space`, navegador ni scripts por terminal; revisa el error exacto antes de hablar de cuota.
+11. **«1 foto tal cual» solo cuando esa foto ES la cara del personaje**; cualquier otra foto es un panel extra y el panel 1 es la cara guardada.
+12. **Regla legal (4i):** lo sensual (bikini, lencería) y R2 solo con el personaje ficticio; una cara real de un tercero solo vestida y no sensual, con permiso, y **nunca** con fotos de terceros que mande un fan (la vista previa la rechaza con un mensaje neutral).
+
+### Herramientas del plugin (nombres reales)
+| Herramienta | Qué hace |
+|---|---|
+| `imagen_kontext` | Paso 1: arma la hoja y manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…». No genera |
+| `imagen_confirmar` | Paso 2: genera con Qwen 2.1 solo tras una confirmación válida del dueño (4h) |
+| `imagen_cancelar` / `imagen_enviar` | Cancelar / reenviar solo lo que produjo `imagen_confirmar` |
+
+`imagen_qwen21` es un **alias conceptual** usado en la doc (la generación es con Qwen 2.1). El nombre interno `imagen_kontext` es histórico (el plugin nació con otro modelo) y se conserva por compatibilidad: hoy no usa ningún otro modelo.
+
+### Política única de contenido
+En el servidor (Contabo / Cerebro Central): **vestido, bikini, lencería y sensual, solo del personaje ficticio**. **Desnudo y sexo van a Cloudflare R2, que todavía no existe**: mientras no exista, no se generan.
 
 ## Ejemplo con Valeria
 ```bash
@@ -103,7 +117,7 @@ Sin secretos en el repo (`.env` está en `.gitignore`). Solo personajes adultos 
 - **Boss mode:** the owner's Telegram ID gives orders (prices, approvals, errors, reports).
 - **Image mode:** follows `skill/SKILL.md`: confirm references + model, wait for OK, generate, validate, deliver.
 
-**Photo rules:** panel 1 is always the character's saved face from `personajes/<name>/ref/` (never a garment); client images are extra panels with a role (ropa/objeto/lugar/persona) named in the prompt ("panel 2 = shirt to wear"); no saved face = ask for it before generating; preview shows face + garment; "several" = 3 (max 4) with distinct poses and seeds; count received photos; keep each person's outfit; place in its own panel; no stretching; Qwen gets a 3:4 1152x1536 2-column grid with no gray padding; prompt starts with `Exactly N people, each appears only once`; one single scene, reject collages/duplicates/wrong count, up to 3 attempts with a new seed; deliver as many photos as requested, each validated; FLUX Kontext only as backup for 1 person; say "faces OK" only if verified; Qwen 2.1 tool only, check the exact API error before claiming quota.
+**Photo rules:** panel 1 is always the character's saved face from `personajes/<name>/ref/` (never a garment); client images are extra panels with a role (ropa/objeto/lugar/persona) named in the prompt ("panel 2 = shirt to wear"); no saved face = ask for it before generating; preview shows face + garment; "several" = 3 (max 4) with distinct poses and seeds; count received photos; keep each person's outfit; place in its own panel; no stretching; Qwen gets a 3:4 1152x1536 2-column grid with no gray padding; prompt starts with `Exactly N people, each appears only once`; one single scene, reject collages/duplicates/wrong count, up to 3 attempts with a new seed; deliver as many photos as requested, each validated; Qwen 2.1 only, no backup model (rule 4g); say "faces OK" only if verified; the only path is `imagen_kontext` → `imagen_confirmar` (doc alias `imagen_qwen21`); check the exact API error before claiming quota. "Use one photo as-is" only when that photo IS the character's face. **Legal rule (4i):** sensual content (bikini, lingerie) and R2 only with the fictional character; a real third party's face only clothed and non-sensual, with consent, never from photos a fan sends (the preview rejects it with a neutral message). **Content policy:** on the server, clothed/bikini/lingerie/sensual of the fictional character only; nudity and sex go to R2, which does not exist yet.
 
 **3-session class:** (1) setup, permissions, installation; (2) character interview + modes; (3) consistent-photo workflow + one Telegram bot per character.
 

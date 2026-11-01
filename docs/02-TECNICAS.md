@@ -52,10 +52,10 @@
 
 ### C2 — ejecución
 ```
-python3 /opt/data/guia-imagen/procedimiento-imagen/tools/armar_hoja.py SALIDA.png panel1 panel2 panel3 [--zoom 1.5] [--principal 0]
+python3 /opt/data/guia-imagen/procedimiento-imagen/tools/armar_hoja.py SALIDA.png panel1 panel2 panel3 [--lugar L] [--recibidas N] [--qwen34 ENTRADA34.png]
 ```
 - `--zoom 1.3–1.6` acerca solo el panel principal (quita fondo y cuerpo; ver `ejemplos/hoja-C2-ejemplo-zoom16.png`).
-- `--principal 0` = paneles iguales (dos personas). Por defecto el panel 1 es 1.4x más ancho.
+- v3: cada panel conserva su proporción (E27) y `--qwen34` arma la entrada 3:4 1152x1536 en 2 columnas sin relleno (E31). `--principal` ya no se usa.
 - **Por qué:** el modelo reparte "atención" según el área; cara grande = más parecido.
 
 ## Árbol de decisión (si/entonces)

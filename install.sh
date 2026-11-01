@@ -18,10 +18,10 @@ detectar() {
 MODO="$(detectar)"
 case "$MODO" in servidor|local) ;; *) echo "MODO_ENTORNO inválido: $MODO" >&2; exit 1;; esac
 mkdir -p "$DEST"/{skill,tools,docs,referencias,salidas}
-cp -r "$ORIG"/skill/. "$DEST/skill/"; cp "$ORIG"/tools/*.py "$DEST/tools/"; chmod +x "$DEST"/tools/*.py
+cp -r "$ORIG"/skill/. "$DEST/skill/"; mkdir -p "$DEST/personajes"; cp -rn "$ORIG"/personajes/. "$DEST/personajes/"; cp "$ORIG"/tools/*.py "$DEST/tools/"; chmod +x "$DEST"/tools/*.py
 for f in "$ORIG"/docs/*.md; do b=$(basename "$f"); [ -e "$DEST/docs/$b" ] && [[ "$b" =~ ^0[45]- ]] || cp "$f" "$DEST/docs/"; done  # no pisa errores/registro
 [ -e "$DEST/.env" ] || cp "$ORIG/.env.example" "$DEST/.env.example"
-[ -e "$DEST/personaje.env" ] || cp "$ORIG/skill/personaje/personaje.env.example" "$DEST/personaje.env"
+[ -e "$DEST/personaje.env" ] || cp "$ORIG/personajes/valeria/personaje.env.example" "$DEST/personaje.env"
 if [ "$MODO" = servidor ]; then
   ADULTO="r2-privado"; NOTA="Servidor/VPS: se puede generar aquí, pero el contenido adulto/explícito NO se guarda en este disco (términos del proveedor). Va a Cloudflare R2 privado (R2_* en .env) y se borra la copia local."
 else
@@ -33,6 +33,7 @@ GUIA=$DEST
 MODO_ENTORNO=$MODO
 ALMACEN_SALIDAS=$DEST/salidas
 ALMACEN_ADULTO=$ADULTO
+# Servidor: en disco solo bikini/lenceria/sensual. Desnudo/sexual -> R2 privado (TODO: subida a R2 aun no construida; mientras tanto NO se genera en servidor)
 ALMACEN_ADULTO_RUTA=$([ "$MODO" = servidor ] && echo 'r2://${R2_BUCKET}/privado/' || echo "$DEST/salidas/privado")
 # $NOTA
 source "$DEST/personaje.env" 2>/dev/null || true

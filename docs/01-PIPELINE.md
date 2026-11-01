@@ -81,7 +81,7 @@ Si falla, cambia **una sola cosa** por intento:
 ## Ejemplo completo (real, 31-oct)
 1. Petición: "Valeria con vestido negro frente a la catedral de Hermosillo".
 2. Tipo: lugar exacto → C2.
-3. `python3 tools/armar_hoja.py /opt/data/salidas/hoja-catedral.png referencias/ref-12-cena-vino.png vestido-negro.png lugar.jpg --zoom 1.5`
+3. `python3 tools/armar_hoja.py /opt/data/salidas/hoja-catedral.png referencias/ref-12-cena-vino.png vestido-negro.png lugar.jpg`
 4. Prompt C2 de `03-PROMPTS.md`. 4b. Confirmación → OK.
 5. `qwen21_generar.py hoja-catedral.png "<prompt>" salidas/20261031-2010-catedral-1.png --seed 42`
 6. Sergio ✅ (seed 42). Seed 7 coló el restaurante → regla "recortar panel 1".

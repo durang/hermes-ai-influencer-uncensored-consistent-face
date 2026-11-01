@@ -26,14 +26,37 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 | `dynamic_space` | **PROHIBIDO para imágenes** | (E1) |
 
 
-## 0b. Reglas duras (v2, aprendidas en la prueba del bar 31-oct-2026)
-1. **Cuenta las imágenes recibidas.** Antes de la confirmación di: `Recibí N imágenes: 1=…, 2=…, 3=…`. La hoja debe tener N paneles (`armar_hoja.py --recibidas N`). Nunca descartes una en silencio; si no vas a usar alguna, dilo antes y explica por qué.
-2. **Misma ropa.** Cada persona conserva la ropa de SU referencia salvo que el dueño pida otra. El prompt la describe explícitamente por persona (ej.: `the man from panel 1 wearing his dark grey t-shirt, the woman from panel 2 wearing her white blouse and blue jeans`). Nunca ropa genérica ("smart casual").
-3. **El lugar va en su propio panel** (`armar_hoja.py --lugar bar.jpg`, siempre el último). El prompt lo cita: `in the {lugar} from panel N`. No lo reemplaces con texto.
-4. **Solo API.** Nunca `dynamic_space` ni el navegador para generar. Antes de decir "se acabó la cuota", muestra el **error exacto** que devolvió la API (el script lo imprime) y confirma que se usó HF_TOKEN.
-5. **Pasos:** 40 por defecto. Más pasos = más detalle pero más lento; arriba de 40 casi no se nota (máx. ~50). Solo sube si el dueño lo pide.
-6. **Una sola imagen de salida**: manda un archivo, no la duplices ni la apiles.
-7. **Almacenamiento:** respeta `ALMACEN_ADULTO` de `config.env`. Si dice `r2-privado`, el contenido adulto nunca se guarda en el disco del servidor (va a R2 privado y se borra local). El repo y sus ejemplos son solo SFW.
+## 0b. Reglas duras (v3 — bar 31-oct + E27–E31 del 1-nov-2026)
+**Antes de generar**
+1. **Confirma referencias + modelo y espera el OK.** Manda «Usaré estas referencias y el modelo X» con la hoja adjunta. Sin OK explícito del dueño no se genera nada.
+2. **Cuenta las imágenes recibidas.** Di `Recibí N imágenes: 1=…, 2=…, 3=…` y usa `armar_hoja.py --recibidas N`. Nunca descartes una en silencio; si no usarás alguna, dilo antes y explica por qué.
+3. **Misma ropa por persona.** Cada persona conserva la ropa de SU referencia salvo que el dueño pida otra; el prompt la describe por persona (ej.: `the man from panel 1 wearing his dark grey t-shirt`). Nunca ropa genérica.
+4. **El lugar va en su propio panel** (`--lugar`, siempre el último) y el prompt lo cita: `in the {lugar} from panel N`.
+
+4b. **Siempre la cara propia del personaje.** Toda generación carga la referencia de cara de `personajes/<nombre>/referencias/` ($REF_PRINCIPAL) como panel 1, y las referencias que mande el cliente (p. ej. foto de una camisa) se agregan encima como paneles extra. Nunca generes solo con referencias del cliente.
+4c. **Varias fotos = esa cantidad.** Si piden N fotos, entrega N, cada una validada por separado (regla 8); si alguna no pasa tras 3 intentos, dilo y entrega las válidas, nunca rellenes con duplicados.
+
+**Hoja y entrada al modelo**
+5. **Hoja numerada sin estirar** (E27): cada foto conserva su proporción original; el número va en la esquina superior izquierda, fuera de la cara.
+6. **Entrada a Qwen 2.1 = rejilla 3:4 de 1152x1536, 2 columnas, sin relleno gris** (E31): `armar_hoja.py HOJA.png ... --qwen34 ENTRADA34.png`. Recorte centrado, nunca estirado; la numeración es la misma que en la hoja.
+7. **El prompt empieza con** `Exactly N people, each appears only once:` y dice qué panel es quién (ej.: `panels 1 and 2 show the same person; panel 3 shows one person; panel 4 is the place.`). Añade: `the numbered sheet is ONLY a reference: generate ONE brand-new full-frame photograph, no side-by-side frames, no borders, no grid, no bars.`
+
+**Después de generar**
+8. **UNA sola escena** (E30). Rechaza la salida si es collage, copia de la hoja, tiene costuras/bordes/barras, la misma persona duplicada o un número de personas distinto de N. Reintenta con **seed nueva**, hasta **3 intentos**. Si el 3.º falla, NO mandes foto: manda el mensaje neutral.
+9. **FLUX Kontext solo como respaldo y solo para 1 persona** (recibe una sola imagen). Con 2+ personas el respaldo es Qwen con otra seed. Usarlo requiere OK del dueño.
+10. **«Caras OK» solo si se verificó** con el detector. Si no hubo verificación, di «no verificado».
+11. **Una sola imagen de salida**: un archivo, sin duplicar ni apilar.
+
+**Herramientas y errores**
+12. **Solo la herramienta Qwen 2.1** (`imagen_qwen21` / `qwen21_generar.py`, 40 pasos). Nunca `dynamic_space` ni el navegador. Antes de hablar de cuota, revisa el **error exacto** de la API (en el log/05-REGISTRO) y confirma que se usó HF_TOKEN.
+13. **Al cliente nunca le hables de token, GPU, API, cuota ni nombres de modelos** (E29). Mensaje neutral: «Tuve un problema al generar la foto, lo intento de nuevo en un momento.» El error exacto va solo al registro y, si lo pide, al dueño en modo jefe.
+
+**Almacenamiento**
+14. Respeta `ALMACEN_ADULTO` de `config.env`:
+    - **Servidor (Contabo / Cerebro Central):** en el disco del servidor solo bikini, lencería o sensual sin desnudo.
+    - **Desnudo / contenido sexual:** va a **Cloudflare R2 privado** — **TODO: aún no construido**; mientras no exista, no se genera ni se guarda en el servidor.
+    - **Computadora propia:** local.
+    El repo, sus prompts y ejemplos son siempre no explícitos.
 
 ## 1. Orquestación: quién hace qué
 | Rol | Hace | No hace |
@@ -89,7 +112,7 @@ SI el dueño responde OK/sí/dale → generar. SI cambia algo → aplicar y volv
 ```
 QWEN21:  modo="Edit an image" steps=40 seed=42 randomize=False aspect="Portrait · 3:4" (o "Square · 1:1") → usar r[1]
 KONTEXT: guidance=2.5 steps=28 seed=42   (rango seguro 2.0–2.5)
-HOJA C2: 1536x768, panel cara 1.4x, --zoom 1.3–1.6
+HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 columnas sin relleno; --zoom 1.3–1.6 opcional en panel 1
 ```
 **Calibrar un modelo nuevo**
 1. Fija referencia (`$REF_PRINCIPAL`), prompt de prueba (carro, con ropa) y seed 42.
@@ -101,13 +124,12 @@ HOJA C2: 1536x768, panel cara 1.4x, --zoom 1.3–1.6
 ## 4. Hoja numerada C2
 **Comando**
 ```
-python3 $TOOLS/armar_hoja.py $SALIDAS/hoja-<escena>.png <persona1> [persona2] [prenda] --lugar <lugar> --recibidas N --zoom 1.5
-# con 2 personas: --principal 0 (paneles iguales)
+python3 $TOOLS/armar_hoja.py $SALIDAS/hoja-<escena>.png <persona1> [persona2] [prenda] --lugar <lugar> --recibidas N --qwen34 $SALIDAS/entrada34-<escena>.png   # Qwen recibe entrada34
 ```
 Ejemplos reales: `ejemplos/hoja-C2-ejemplo-zoom16.png` (cara recortada, recomendado); resultados `../pruebas-modelo/multi-ref/qwen-hoja-A.png`, `qwen-pareja-bar-s42.png`.
 
 **Reglas de armado (y por qué)**
-- Caras grandes y, si hay 2 personas, del **mismo tamaño** (`--principal 0`) → el modelo da el mismo peso a ambas.
+- Caras grandes y, si hay 2 personas, del mismo tamaño (la rejilla 2 columnas ya lo hace) → el modelo da el mismo peso a ambas.
 - Zoom-out vs parecido: más cabeza/pelo = más contexto pero cara más chica = menos parecido. Punto medio: cabeza completa con pelo y hombros (preferencia de el dueño).
 - Recorta fondos del panel de la persona → evita que se "cuele" (pasó 1 de 3 con seed 7).
 - Prenda sola sobre fondo liso, sin persona.
@@ -115,9 +137,9 @@ Ejemplos reales: `ejemplos/hoja-C2-ejemplo-zoom16.png` (cara recortada, recomend
 
 **Plantilla de prompt**
 ```
-Create a new single photo: the person from panel 1, keep their face exactly the same, wearing the {prenda} from panel 2, in the {lugar} from panel 3. {acción neutral}. Casual iPhone 12 photo, natural light, realistic skin, sharp detail. Use panel 1 for identity only. No panels, no numbers, no text.
+Exactly 1 person, appears only once: panel 1 is the person, panel 2 is the outfit, panel 3 is the place. The numbered sheet is ONLY a reference: generate ONE brand-new full-frame photograph. The person from panel 1, keep their face exactly the same, wearing the {prenda} from panel 2, in the {lugar} from panel 3. {acción neutral}. Casual iPhone 12 photo, natural light, realistic skin, sharp detail. Use panel 1 for identity only. No panels, no numbers, no text.
 ```
-Dos personas: `the man from panel 1 and the woman from panel 2, both keep their faces exactly the same, sitting together at the bar from panel 3, each wearing the exact outfit from their own reference ({ropa persona 1}; {ropa persona 2})…`
+Dos personas: `Exactly 2 people, each appears only once: panel 1 is the man, panel 2 is the woman, panel 3 is the place. The man from panel 1 and the woman from panel 2, both keep their faces exactly the same, sitting together at the bar from panel 3, each wearing the exact outfit from their own reference ({ropa persona 1}; {ropa persona 2})…`
 
 ## 5. Aprendizaje de errores
 - El código del bot añade automáticamente cada fallo a `04-ERRORES.md` como **E10, E11…** y cada intento a `05-REGISTRO.md` (solo metadatos, nunca la imagen).

@@ -26,3 +26,12 @@ El código de Hermes agrega una fila automáticamente: `| E{n} | síntoma | caus
 - **Qué pasó:** después del reinicio, Hermes siguió con `dynamic_space` (la referencia no se subió, salió otra cara), propuso usar su Chromium headless y luego dijo «se agotó la cuota ZeroGPU» cuando HF marcaba 26.8/40 min y $2 de saldo.
 - **Regla:** la única vía para generar es `imagen_kontext` → `imagen_confirmar` (alias `imagen_qwen21`; Qwen 2.1 con handle_file + HF_TOKEN de iccanobif). Solo Qwen 2.1 (4g). `tools/qwen21_generar.py` es solo calibración manual en el host. `dynamic_space` y el navegador están PROHIBIDOS para imagen.
 - **Antes de decir "sin cuota":** mostrar el error exacto de la API y revisar https://huggingface.co/settings/billing. Nunca proponer pagar ni cambiar de proveedor sin ese dato.
+
+## E33 · El flujo real no repetía lo que funcionó en el script de prueba (1 nov 2026, C17)
+- **Qué pasó:** el script (1 cara + camisa) dio al personaje con la camisa; el flujo real por Telegram con la misma camisa daba collage, 2 personas o una cara ajena.
+- **Diferencias:** hoja con 2 caras de la misma persona en vez de 1; prompt del LLM con «several photos», paneles mezclados en la escena, sin identidad y sin cierre; oferta de otro modelo.
+- **Regla:** 4l (1 persona = 1 cara + prenda, plantilla «Exactly 1 person…», escalera solo Qwen 3 + 2, candado por chat, confirmación idempotente).
+
+## E34 · Vista previa doble: el modelo repetía el mensaje del plugin (1 nov 2026, C18)
+- **Qué pasó:** después de la vista previa del plugin, Hermes mandaba otro mensaje con su estilo repitiéndola («Te mandé la vista previa ✅… responde OK»), y al final otro «¡Listo! Te llegaron las 3 fotos…».
+- **Regla:** 4m. SOUL: no repetir ni resumir lo que ya mandó el plugin; el resultado de la herramienta trae `ya_enviado_al_usuario: true` y `no_repetir`.

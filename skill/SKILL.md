@@ -31,7 +31,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 
 ## 0b. Reglas duras (v4.4 — bar 31-oct + E27–E31 + 4b–4i del 1-nov-2026)
-> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
+> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4l** 1 persona/escalera Qwen (C17), **4m** sin repetición (C18), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
 **Antes de generar**
 1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» con la hoja adjunta. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
 2. **Cuenta las imágenes recibidas.** Di `Recibí N imágenes: 1=…, 2=…, 3=…` y usa `armar_hoja.py --recibidas N`. Nunca descartes una en silencio; si no usarás alguna, dilo antes y explica por qué.
@@ -211,3 +211,16 @@ Si algo no coincide, lo corrige antes de enviar y **no inventa**; si no tiene el
 Qwen-Image 2.1 se usa bajo licencia de investigación (Qwen RESEARCH LICENSE) y el uso es responsabilidad de quien lo use. Hermes lo avisa **una sola vez por conversación** con el dueño y solo lo repite si se lo preguntan o si hace falta. En el chat con fans no se mencionan modelos (SOUL).
 
 **EN — Rule 4k:** Qwen-Image 2.1 is used under a research license and use is the user's responsibility. Hermes says it once per conversation with the owner, and again only if asked or needed.
+
+### Regla 4l — Generación de 1 persona y escalera solo Qwen (C17, 1 nov 2026)
+- **1 persona = 1 cara:** la hoja lleva solo la cara guardada del personaje (`cara-1`) en el panel 1 y la prenda en el panel 2; con pareja o grupo, una cara por persona. «Cada persona conserva SU ropa» solo aplica con 2 o más personas; con 1, «<personaje> se pone: <prenda>».
+- **Prompt de 1 persona (plantilla que funcionó):** «Exactly 1 person: the woman from panel 1 (same face), wearing the garment from panel 2. Single photo, one scene, no panels, no collage, no split.» + escena limpia (sin «several photos» ni menciones de paneles) + identidad + «No panels, no numbers, no text.».
+- **Escalera solo Qwen:** 3 intentos con seed nueva y el mismo prompt; luego 2 con 1 cara + prenda en hoja de 2 paneles y prompt reforzado (5 como máximo). Si todo falla: error exacto + «¿Reintento con otra foto de cara o cambio algo?»; la vista previa queda «falló, esperando reintento» con el MISMO id.
+- **Candado por chat:** mientras genera se responde una sola vez «Estoy generando tus fotos (x/N)…»; un OK en ese momento no cuenta; se suelta al terminar, al fallar o a los 10 min. Generar lo hace solo el plugin con confirmación idempotente (una por vista previa); el modelo nunca llama `imagen_generar`.
+
+**EN — Rule 4l:** one person = one face (panel 1) + garment (panel 2) with the single-photo prompt above; Qwen-only ladder of 3 + 2 tries (max 5), then the exact error; per-chat lock with one «generating (x/N)» notice and a 10-minute timeout; only the plugin generates.
+
+### Regla 4m — Solo la vista previa del plugin, sin repetición del modelo (C18, 1 nov 2026)
+Cuando `imagen_kontext` (preparar) o `imagen_confirmar` (generar) ya mandó su mensaje al usuario (la vista previa o las fotos), Hermes **no lo repite ni lo resume** con su estilo (nada de «Te mandé la vista previa ✅…» ni «¡Listo! Te llegaron las fotos…»): responde vacío o con a lo sumo una frase corta de personaje, sin datos técnicos. El resultado de la herramienta trae `ya_enviado_al_usuario: true` y `no_repetir` para recordárselo.
+
+**EN — Rule 4m:** once the plugin has sent its preview or the photos, Hermes does not repeat or summarize them; it replies empty or with at most one short in-character line, no technical details. Tool results carry `ya_enviado_al_usuario: true`.

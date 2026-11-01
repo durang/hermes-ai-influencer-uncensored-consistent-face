@@ -78,6 +78,8 @@ ok "K1 aviso licencia Qwen en README + regla 4k una vez por conversación" "grep
 ok "A1 PROPUESTAS.md con plantilla" "grep -q 'Qué pasó' '$R/PROPUESTAS.md' && grep -q 'Evidencia' '$R/PROPUESTAS.md' && grep -q 'Cambio propuesto' '$R/PROPUESTAS.md' && grep -q 'Archivo' '$R/PROPUESTAS.md'"
 ok "A2 autoaprendizaje en README ES/EN y SKILL" "grep -q '^## Autoaprendizaje (flujo canónico)' '$R/README.md' && grep -q 'Self-learning (canonical)' '$R/README.md' && grep -q 'Grok Bot revisa y decide' '$R/skill/SKILL.md' && grep -q 'otro revisor' '$R/skill/SKILL.md' && grep -q 'rutina nocturna de AInfluencer' '$R/skill/SKILL.md'"
 ok "A3 NSFW preciso: R2 no construido" "grep -q 'todavía no está construido' '$R/README.md' && grep -q 'not built yet' '$R/README.md'"
+ok "C1 regla 4l (C17) y 4m (C18) en SKILL, E33/E34 en 04-ERRORES" "grep -q 'Regla 4l' '$R/skill/SKILL.md' && grep -q 'Regla 4m — Solo la vista previa del plugin' '$R/skill/SKILL.md' && grep -q 'ya_enviado_al_usuario' '$R/skill/SKILL.md' && grep -q '^## E33' '$R/docs/04-ERRORES.md' && grep -q '^## E34' '$R/docs/04-ERRORES.md'"
+ok "C2 SOUL de Valeria: no repite la vista previa (4m) + CHANGELOG v4.8" "grep -q 'regla 4m' '$R/personajes/valeria/SOUL.md' && grep -q '^## v4.8' '$R/CHANGELOG.md'"
 ok "CL2 CHANGELOG v4.7" "grep -q '^## v4.7' '$R/CHANGELOG.md'"
 ok "CL1 CHANGELOG v4.6" "grep -q '^## v4.6' '$R/CHANGELOG.md'"
 

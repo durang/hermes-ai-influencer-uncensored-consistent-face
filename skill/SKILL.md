@@ -150,6 +150,7 @@ Dos personas: `Exactly 2 people, each appears only once: panel 1 is the man, pan
 ## 5. Aprendizaje de errores
 - El código del bot añade automáticamente cada fallo a `04-ERRORES.md` como **E10, E11…** y cada intento a `05-REGISTRO.md` (solo metadatos, nunca la imagen).
 - Rutina nocturna (~11 p. m. Hermosillo): si esos archivos no cambiaron, se detiene. Si cambiaron, AInfluencer convierte el error en regla y lo anota en `CHANGELOG.md`.
+- **Autoaprendizaje (canónico):** Hermes registra errores y aciertos y los **propone** en `PROPUESTAS.md` (plantilla: qué pasó, evidencia, cambio propuesto, archivo). Hermes no edita este skill ni sube nada. **Grok Bot revisa y decide** si se sube al repo (aplica, corre `tests/verificar.sh`, anota en `CHANGELOG.md`); sin Grok Bot decide otro revisor (otro agente o una persona). La rutina nocturna de AInfluencer lee `PROPUESTAS.md`. Nada aprendido cambia la política de contenido ni la regla 4i sin el OK del dueño.
 - **Error → regla**: (1) síntoma, (2) causa probada con A/B, (3) regla si/entonces, (4) dónde se aplica (paso/archivo), (5) prueba que lo confirma.
 
 | ❌ por | Corrección (una por intento) |

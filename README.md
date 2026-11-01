@@ -1,4 +1,12 @@
-# Hermes Skill · AI Influencer Consistent Sensorial
+# Hermes AI Influencer · Uncensored Consistent Face
+
+**La misma cara en cada foto. Un bot de Telegram que chatea, vende y aprende solo.** Skill sin censura (NSFW) para Hermes y Grok Bot: crea tu personaje de IA, conecta su bot y genera fotos consistentes con Qwen-Image 2.1.
+
+- 🎯 **Cara consistente:** hoja de referencias numerada (panel 1 = cara guardada), conteo de caras y anti-collage con reintentos.
+- 💬 **Bot listo para vender:** chat con fans, modo jefe para el dueño, precios y confirmación antes de generar.
+- 🧠 **Autoaprendizaje canónico:** Hermes registra errores y aciertos y los propone en `PROPUESTAS.md`; Grok Bot revisa y decide qué se sube.
+- 🔞 **NSFW, con precisión:** hoy el servidor genera vestido, bikini, lencería y sensual del personaje ficticio adulto. El contenido explícito irá a almacenamiento privado Cloudflare R2, **que todavía no está construido**. Nunca contenido explícito con la cara de una persona real.
+- 🧩 **Una carpeta y un bot por personaje**, instalador con respaldo y `--dry-run`, docs en ES/EN y pruebas (`tests/verificar.sh`).
 
 **Secret Fans Academia IA** · Skill para que un bot de Telegram (Hermes u otro) maneje un personaje de IA: chatear con fans, recibir órdenes del dueño y generar **fotos con la misma cara** que las referencias. Ejemplo incluido: **Valeria**, personaje ficticio adulto (26 años, pelirroja). Todo el contenido del repo es no explícito.
 
@@ -16,12 +24,13 @@
 | `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro |
 | `install.sh` | Instala y detecta el entorno; respalda con fecha antes de pisar y tiene `--dry-run` |
 | `tests/verificar.sh` | Pruebas del repo (instalador, docs, personajes, hoja) |
+| `PROPUESTAS.md` | Autoaprendizaje: propuestas de Hermes que Grok Bot revisa |
 | `CHANGELOG.md` · `LICENSE` | Historial de versiones · Licencia MIT |
 
 ## Instalar
 ```bash
-git clone git@github.com:<usuario>/hermes-skill-ai-influencer-consistent-sensorial.git
-cd hermes-skill-ai-influencer-consistent-sensorial
+git clone git@github.com:<usuario>/hermes-ai-influencer-uncensored-consistent-face.git
+cd hermes-ai-influencer-uncensored-consistent-face
 ./install.sh --dry-run /opt/data/guia-imagen   # primero: muestra qué haría, sin tocar nada
 ./install.sh /opt/data/guia-imagen             # respalda en respaldos/AAAAMMDD-HHMMSS/ lo que va a pisar y luego instala
 cp /opt/data/guia-imagen/.env.example /opt/data/guia-imagen/.env   # pon HF_TOKEN y TELEGRAM_TOKEN_<NOMBRE> (nunca en git)
@@ -135,6 +144,13 @@ Prompt: `Exactly 1 person, appears only once: panel 1 = Valeria's face (identity
 - **Sesión 2 — Entrevista del personaje y modos:** copiar `personajes/_plantilla/`; llenar `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md` y `REGLAS.md` (edad, divulgación de IA, regla 4i); agregar el personaje y su bot a `personajes/README.md`; probar modo cliente, modo jefe y modo imagen.
 - **Sesión 3 — Fotos consistentes y un bot por personaje:** referencias en `ref/` (según `ref/README.md`); hoja numerada (panel 1 = cara guardada); confirmación válida y candado (4h); solo Qwen 2.1 (4g); validación (una escena, conteo de caras); registro de errores; conectar el bot de Telegram del personaje.
 
+## Autoaprendizaje (flujo canónico)
+1. **Hermes registra**: cada error (`docs/04-ERRORES.md`) y cada acierto que valga la pena repetir.
+2. **Hermes propone**: añade una entrada a `PROPUESTAS.md` con la plantilla (qué pasó, evidencia, cambio propuesto, archivo). Hermes **no** edita el skill ni sube nada por su cuenta.
+3. **Grok Bot revisa y decide** (forma canónica): aprueba → aplica el cambio, corre `tests/verificar.sh`, anota en `CHANGELOG.md` y sube al repo; rechaza o pide más evidencia → lo marca en la entrada. Sin Grok Bot, decide otro revisor (otro agente o una persona).
+4. **Rutina nocturna de AInfluencer** (~11 p. m. Hermosillo): lee `PROPUESTAS.md` y los registros; si no hay nada nuevo, se detiene; si hay, revisa con este flujo.
+Lo aprendido nunca cambia la política de contenido ni las reglas legales (4i) sin el OK del dueño.
+
 ## Usarlo con Grok Bot
 Grok Bot puede: hacer la entrevista contigo y escribir la carpeta del personaje; armar y revisar hojas con `armar_hoja.py`; documentar errores nuevos en `docs/04-ERRORES.md` y correr la revisión nocturna. Los cambios en el servidor (contenedor, plugins, reinicios) los hace el bot del servidor (Cerebro Central) **solo con el OK del dueño**. Pídele, por ejemplo: «Crea el personaje Ana con la plantilla» o «Revisa por qué la última foto salió como collage».
 
@@ -149,6 +165,8 @@ Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Tele
 
 ---
 <a id="english"></a>
+
+**Self-learning (canonical):** Hermes logs errors and wins and proposes them in `PROPUESTAS.md` (what happened, evidence, proposed change, file). Grok Bot reviews and decides whether it goes into the repo; without Grok Bot, another reviewer (agent or person) decides. AInfluencer's nightly routine runs this review. **NSFW note:** today the server only generates clothed, bikini, lingerie and sensual images of the fictional adult character; explicit content will go to private Cloudflare R2, not built yet. Never explicit content with a real person's face.
 # English
 
 **Secret Fans Academia IA** · A skill for a Telegram bot (Hermes or any other) that runs an AI character: chats with fans, takes orders from the owner, and generates **photos with the same face** as the references. Example: **Valeria**, a fictional adult character (26, redhead). Everything in the repo is non-explicit.

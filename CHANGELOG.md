@@ -1,6 +1,12 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v4.7 · 2026-11-01
+- Repo renombrado a `durang/hermes-ai-influencer-uncensored-consistent-face` (los nombres anteriores redirigen). Título: «Hermes AI Influencer · Uncensored Consistent Face». Descripción y topics de GitHub nuevos.
+- README con encabezado de venta y más detalle; aviso NSFW preciso (hoy servidor solo vestido/bikini/lencería/sensual del personaje ficticio; explícito en R2, aún no construido).
+- Autoaprendizaje canónico: `PROPUESTAS.md` (plantilla), Hermes propone y Grok Bot revisa y decide; sin Grok Bot, otro revisor. Documentado en README ES/EN y SKILL §5; lo usa la rutina nocturna de AInfluencer.
+- Tests: N1 actualizado, A1–A3 nuevos.
+
 ## v4.6 · 2026-11-01
 - Repo renombrado a `durang/hermes-skill-ai-influencer-consistent-sensorial` (el nombre viejo redirige). Título: «Hermes Skill · AI Influencer Consistent Sensorial».
 - Valeria pelirroja (rizos cobrizos, pecas, ojos avellana) explícito en su `SOUL.md` (sin otro color de pelo).

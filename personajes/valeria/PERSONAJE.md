@@ -11,7 +11,7 @@
 | Estilo | Casual, cotidiano, natural |
 
 ## Referencias (12 fotos oficiales)
-Box y Cerebro Central: `referencias/` junto a esta carpeta. Contenedor: `/opt/data/guia-imagen/referencias/` (las 12 referencias copiadas el 31-oct).
+Box y Cerebro Central: `ref/` junto a esta carpeta. Contenedor: `/opt/data/guia-imagen/personajes/valeria/ref/` (las 12 referencias copiadas el 31-oct).
 
 | Archivo | Rol |
 |---|---|

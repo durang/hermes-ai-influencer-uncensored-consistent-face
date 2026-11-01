@@ -11,7 +11,7 @@ description: Úsalo cuando el dueño (modo jefe) o un alumno pida una foto de su
 ```
 source $GUIA/config.env        # lo escribe install.sh (GUIA, ALMACEN_*, PERSONAJE_*)
 PROC=$GUIA/skill
-REFS=$GUIA/referencias            # $REF_PRINCIPAL = cara principal
+REFS=$GUIA/personajes/$PERSONAJE_SLUG/ref   # $REF_PRINCIPAL = cara guardada (panel 1 SIEMPRE)
 SALIDAS=$ALMACEN_SALIDAS          # AAAAMMDD-HHMM-escena-intento.png
 TOOLS=$GUIA/tools                  # armar_hoja.py, qwen21_generar.py
 REGISTRO=$GUIA/docs/05-REGISTRO.md      # bitácora automática (metadatos)
@@ -33,8 +33,10 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 3. **Misma ropa por persona.** Cada persona conserva la ropa de SU referencia salvo que el dueño pida otra; el prompt la describe por persona (ej.: `the man from panel 1 wearing his dark grey t-shirt`). Nunca ropa genérica.
 4. **El lugar va en su propio panel** (`--lugar`, siempre el último) y el prompt lo cita: `in the {lugar} from panel N`.
 
-4b. **Siempre la cara propia del personaje.** Toda generación carga la referencia de cara de `personajes/<nombre>/referencias/` ($REF_PRINCIPAL) como panel 1, y las referencias que mande el cliente (p. ej. foto de una camisa) se agregan encima como paneles extra. Nunca generes solo con referencias del cliente.
-4c. **Varias fotos = esa cantidad.** Si piden N fotos, entrega N, cada una validada por separado (regla 8); si alguna no pasa tras 3 intentos, dilo y entrega las válidas, nunca rellenes con duplicados.
+4b. **Panel 1 = SIEMPRE la cara guardada del personaje** (`$REFS/$REF_PRINCIPAL`, en `personajes/<nombre>/ref/`), nunca una prenda. Toda generación la carga; las imágenes del cliente se agregan encima como paneles extra, cada una con rol: `ropa`, `objeto`, `lugar` o `persona` (`armar_hoja.py --cara $REFS/$REF_PRINCIPAL --extra ropa:camisa.jpg`). El prompt nombra cada panel con su rol (ej.: `panel 1 = Valeria's face (identity); panel 2 = shirt to wear`). Nunca generes solo con imágenes del cliente.
+4c. **Sin foto de cara guardada no se genera.** Si `personajes/<nombre>/ref/` no tiene la cara (armar_hoja.py sale con `ERROR SIN CARA`), pide primero la foto de cara.
+4d. **La confirmación muestra cara + prenda** (la hoja con panel 1 = cara y el panel de ropa) antes del OK.
+4e. **«Varias» fotos = 3 (máximo 4)**, cada una con pose y seed distintas, y cada una pasa el control de número de personas (regla 8). Si piden un número exacto, se entrega ese número (máx. 4 por pedido). Si alguna no pasa tras 3 intentos, dilo y entrega las válidas; nunca rellenes con duplicados.
 
 **Hoja y entrada al modelo**
 5. **Hoja numerada sin estirar** (E27): cada foto conserva su proporción original; el número va en la esquina superior izquierda, fuera de la cara.
@@ -70,7 +72,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 **Reglas si/entonces**
 - SI el dueño manda **1 foto** → ENTONCES técnica A0 con esa foto como referencia.
 - SI manda **2–6 fotos** → ENTONCES hoja C2 en ese orden (panel 1 = la primera).
-- SI no manda foto → ENTONCES A0 con `$REFS/$REF_PRINCIPAL-calle.png`.
+- SI no manda foto → ENTONCES A0 con `$REFS/$REF_PRINCIPAL`.
 - SI pide un lugar real o una prenda exacta → ENTONCES C2 (persona + prenda + lugar).
 - SI pide solo cambiar ropa de una foto existente del personaje → ENTONCES `imagen_kontext`.
 - SI la petición no es SFW en el canal de jefe sin modo explícito acordado, o usa a una persona real sin consentimiento → ENTONCES no generes y explica por qué.
@@ -124,7 +126,7 @@ HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 
 ## 4. Hoja numerada C2
 **Comando**
 ```
-python3 $TOOLS/armar_hoja.py $SALIDAS/hoja-<escena>.png <persona1> [persona2] [prenda] --lugar <lugar> --recibidas N --qwen34 $SALIDAS/entrada34-<escena>.png   # Qwen recibe entrada34
+python3 $TOOLS/armar_hoja.py $SALIDAS/hoja-<escena>.png --cara $REFS/$REF_PRINCIPAL [--extra ropa:<prenda>] [--extra persona:<persona2>] [--extra objeto:<obj>] --lugar <lugar> --recibidas N --qwen34 $SALIDAS/entrada34-<escena>.png   # Qwen recibe entrada34
 ```
 Ejemplos reales: `ejemplos/hoja-C2-ejemplo-zoom16.png` (cara recortada, recomendado); resultados `../pruebas-modelo/multi-ref/qwen-hoja-A.png`, `qwen-pareja-bar-s42.png`.
 

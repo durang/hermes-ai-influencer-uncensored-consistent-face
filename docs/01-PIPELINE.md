@@ -23,7 +23,7 @@ Regla: **no se avanza si la compuerta no da ✅.** Máximo de reintentos de cali
 **Compuerta 2:** ✅ técnica + modelo + herramienta anotados. ❌ La herramienta no existe → avisa, no improvises.
 
 ## Paso 3 — Cargar la referencia y confirmar que existe
-- Ruta por defecto: `/opt/data/guia-imagen/referencias/ref-1-calle.png`.
+- Ruta por defecto: `/opt/data/guia-imagen/personajes/<nombre>/ref/ref-1-calle.png`.
 - Verifica: el archivo existe y pesa > 100 KB (`ls -l`).
 
 **Compuerta 3:** ✅ "Referencia cargada: ref-1-calle.png (X KB)". ❌ No existe → 04-ERRORES §E2.
@@ -81,7 +81,7 @@ Si falla, cambia **una sola cosa** por intento:
 ## Ejemplo completo (real, 31-oct)
 1. Petición: "Valeria con vestido negro frente a la catedral de Hermosillo".
 2. Tipo: lugar exacto → C2.
-3. `python3 tools/armar_hoja.py /opt/data/salidas/hoja-catedral.png referencias/ref-12-cena-vino.png vestido-negro.png lugar.jpg`
+3. `python3 tools/armar_hoja.py /opt/data/salidas/hoja-catedral.png --cara personajes/valeria/ref/ref-12-cena-vino.png --extra ropa:vestido-negro.png --lugar lugar.jpg`
 4. Prompt C2 de `03-PROMPTS.md`. 4b. Confirmación → OK.
 5. `qwen21_generar.py hoja-catedral.png "<prompt>" salidas/20261031-2010-catedral-1.png --seed 42`
 6. Sergio ✅ (seed 42). Seed 7 coló el restaurante → regla "recortar panel 1".
@@ -96,7 +96,7 @@ Evidencia: `../pruebas-modelo/multi-ref/qwen-hoja-A.png` (✅), `qwen-hoja-C.png
 ## Solución de problemas
 | Síntoma | Causa probable | Haz |
 |---|---|---|
-| `ERROR E2` del script | ruta mal / archivo vacío | `ls -l /opt/data/guia-imagen/referencias/` |
+| `ERROR E2` del script | ruta mal / archivo vacío | `ls -l /opt/data/guia-imagen/personajes/<nombre>/ref/` |
 | Código de salida 3 | cuota ZeroGPU | avisar hora de reintento (E5) |
 | Código 2 | Space caído | preguntar si usar Kontext |
 | Imagen con paneles/números | prompt sin cierre | añadir "No panels, no numbers, no text" |

@@ -22,8 +22,8 @@
 ## Referencias
 | Archivo | Rol |
 |---|---|
-| `referencias/ref-1-*.png` | Cara principal (frontal, buena luz, cabeza completa con pelo) |
-| `referencias/ref-2…` | Ángulos / escenas |
+| `ref/ref-1-*.png` | Cara principal (frontal, buena luz, cabeza completa con pelo) |
+| `ref/ref-2…` | Ángulos / escenas |
 
 ## Telegram
 | Campo | Valor |

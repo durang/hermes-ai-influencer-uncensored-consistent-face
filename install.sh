@@ -17,7 +17,7 @@ detectar() {
 }
 MODO="$(detectar)"
 case "$MODO" in servidor|local) ;; *) echo "MODO_ENTORNO inválido: $MODO" >&2; exit 1;; esac
-mkdir -p "$DEST"/{skill,tools,docs,referencias,salidas}
+mkdir -p "$DEST"/{skill,tools,docs,personajes,salidas}
 cp -r "$ORIG"/skill/. "$DEST/skill/"; mkdir -p "$DEST/personajes"; cp -rn "$ORIG"/personajes/. "$DEST/personajes/"; cp "$ORIG"/tools/*.py "$DEST/tools/"; chmod +x "$DEST"/tools/*.py
 for f in "$ORIG"/docs/*.md; do b=$(basename "$f"); [ -e "$DEST/docs/$b" ] && [[ "$b" =~ ^0[45]- ]] || cp "$f" "$DEST/docs/"; done  # no pisa errores/registro
 [ -e "$DEST/.env" ] || cp "$ORIG/.env.example" "$DEST/.env.example"

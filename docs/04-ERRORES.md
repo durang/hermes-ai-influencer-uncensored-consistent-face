@@ -3,7 +3,7 @@
 | # | Error | Causa | Arreglo |
 |---|---|---|---|
 | E1 | Probaba Z-Image, Qwen, Kontext… al azar | Sin tabla de decisión | Paso 2: solo el modelo de la tabla. Nada de `dynamic_space` a prueba y error |
-| E2 | No encontraba las referencias | El contenedor no ve `/home/ec2-user` | Usar `/opt/data/guia-imagen/referencias/` (host: `/srv/hermes-ainfluencer/data/guia-imagen/`) |
+| E2 | No encontraba las referencias | El contenedor no ve `/home/ec2-user` | Usar `/opt/data/guia-imagen/personajes/valeria/ref/` (host: `/srv/hermes-ainfluencer/data/guia-imagen/`) |
 | E3 | Kontext daba 404 / sin imagen de entrada | `dynamic_space` no puede mandar la imagen de entrada | Usar el plugin dedicado `imagen_kontext` (en construcción; requiere reinicio del contenedor) |
 | E4 | `imagen_enviar` fallaba | Las URLs temporales `*.hf.space` caducan o no se pueden bajar | Descargar el archivo a disco local y enviar la ruta local (Paso 7) |
 | E5 | "Quota exceeded" ZeroGPU | Cuota compartida entre Spaces | HF PRO ya está activo (más cuota). Si aun así se agota: esperar al reset o usar FAL `fal-ai/flux-kontext/dev` (requiere llave) |

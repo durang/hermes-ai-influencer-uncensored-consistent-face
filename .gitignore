@@ -1,0 +1,5 @@
+.env
+config.env
+salidas/
+*.log
+__pycache__/

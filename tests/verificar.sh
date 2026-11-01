@@ -45,6 +45,31 @@ ok "D8 v4.4: la selfie del fan entra como persona (no se rechaza); explícito co
 ok "D9 Términos y Condiciones solo como sugerencia no canónica (no en las reglas)" \
    "grep -q '## Sitio web del personaje (sugerencias)' '$R/README.md' && grep -q 'no canónica' '$R/README.md' && ! sed -n '/^## Reglas clave/,/^## /p' '$R/README.md' | grep -qi 'términos y condiciones'"
 
+# ---------- personajes ----------
+for d in "$R"/personajes/*/; do
+  n=$(basename "$d")
+  ok "P1 personajes/$n: PERSONAJE, SOUL, PRECIOS, REGLAS, personaje.env.example y ref/README.md" \
+     "for f in PERSONAJE.md SOUL.md PRECIOS.md REGLAS.md personaje.env.example ref/README.md; do [ -f '$d'\$f ] || exit 1; done"
+done
+ok "P2 personajes/README.md: índice con Valeria y su bot (sin token)" "grep -q '\`valeria\`' '$R/personajes/README.md' && grep -q 'TELEGRAM_TOKEN_VALERIA' '$R/personajes/README.md'"
+ok "P3 sin fotos versionadas en ref/ (solo README/.gitkeep)" "! git -C '$R' ls-files 'personajes/*/ref/*' | grep -vE '/(README\.md|\.gitkeep)$' | grep -q ."
+ok "P4 sin tokens ni IDs en personajes/ (bot token, hf_, números de 7+ dígitos)" \
+   "! grep -rEn '[0-9]{8,10}:[A-Za-z0-9_-]{30,}|hf_[A-Za-z0-9]{10,}|(^|[^0-9.])[0-9]{7,}([^0-9]|$)' '$R/personajes' | grep -q ."
+ok "P5 Valeria = ficha pública: sin rutas internas (/opt/data, Cerebro, Box) en su PERSONAJE.md" "! grep -qiE '/opt/data|cerebro|box y' '$R/personajes/valeria/PERSONAJE.md'"
+ok "P6 SOUL/REGLAS: divulgación de IA y confirmación de mayoría de edad" \
+   "grep -q 'creado con IA' '$R/personajes/valeria/SOUL.md' && grep -q 'mayor de edad' '$R/personajes/valeria/SOUL.md' && grep -q 'Regla legal 4i' '$R/personajes/valeria/REGLAS.md'"
+ok "P7 .gitignore ignora fotos de ref/" "git -C '$R' check-ignore -q personajes/valeria/ref/foto.png && ! git -C '$R' check-ignore -q personajes/valeria/ref/README.md"
+ok "P8 install.sh instala REGLAS.md y ref/README.md" "[ -f '$D/personajes/valeria/REGLAS.md' ] && [ -f '$D/personajes/valeria/ref/README.md' ]"
+
+# ---------- licencia, changelog, flujo, ES/EN, clase ----------
+ok "L1 LICENSE MIT y CHANGELOG.md en la raíz (ya no en docs/)" "grep -q '^MIT License' '$R/LICENSE' && [ -f '$R/CHANGELOG.md' ] && [ ! -e '$R/docs/CHANGELOG.md' ] && grep -q '## v4.5' '$R/CHANGELOG.md'"
+ok "F1 flujo §2: confirmación válida de 4h (incluye ándale) y candado" "grep -q 'ándale' '$R/skill/SKILL.md' && grep -q 'Candado (4h)' '$R/skill/SKILL.md' && ! grep -q 'OK/sí/dale → generar' '$R/skill/SKILL.md'"
+ok "F2 flujo §2: el envío lo hace imagen_confirmar; sin 'El script reintenta' ni 'código 3'" "! grep -q 'El script reintenta' '$R/skill/SKILL.md' && ! grep -q 'código 3' '$R/skill/SKILL.md'"
+ok "F3 §0b con índice de 4b–4i y §6 con rutas personajes/<slug>/" "grep -q 'Índice: 1–14' '$R/skill/SKILL.md' && ! grep -q 'personaje/plantilla.md' '$R/skill/SKILL.md'"
+ok "E1 EN: herramientas reales, sugerencias del sitio, licencia y dry-run" \
+   "sed -n '/<a id=\"english\"><\/a>/,\$p' '$R/README.md' > '$T/en.md' && grep -q 'Plugin tools (real names)' '$T/en.md' && grep -q 'Character website (suggestions' '$T/en.md' && grep -q 'MIT' '$T/en.md' && grep -q 'dry-run' '$T/en.md'"
+ok "C1 clase en 3 sesiones: dry-run, REGLAS.md, 4g/4h" "sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q 'dry-run' && sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q 'REGLAS.md' && sed -n '/^## Clase en 3 sesiones/,/^## /p' '$R/README.md' | grep -q '4h'"
+
 # ---------- herramienta de hoja ----------
 if python3 -c "import PIL" 2>/dev/null; then
   python3 - "$T" <<'PY'

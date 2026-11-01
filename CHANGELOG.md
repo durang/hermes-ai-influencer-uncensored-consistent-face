@@ -1,5 +1,16 @@
 # CHANGELOG
+Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v4.5 · 2026-11-01
+- Revisión completa con checklist (flujo, nombres reales, solo Qwen, candado, confirmaciones, 4b–4i, almacenamiento, instalador, ES/EN, clase, sugerencias del sitio) y cierre de huecos:
+  - **SKILL:** índice de reglas en §0b; confirmación válida y candado de 4h en el flujo; el control y el envío los hace `imagen_confirmar`; la tabla de reintentos ya no menciona el script; ranking renumerado; calibración solo fuera de producción; rutas de §6 a `personajes/<slug>/`; nota de la licencia de Qwen.
+  - **README:** «Qué incluye» completo; entrevista con `REGLAS.md`; el modo imagen lo opera el dueño; 3 sesiones con dry-run, licencias, 4g/4h/4i; secciones de licencia y seguridad.
+  - **EN:** instalación con dry-run y respaldo; política única; herramientas reales; sugerencias del sitio; licencia.
+- `personajes/README.md` (índice de personajes y su bot). Cada personaje con `PERSONAJE.md`, `SOUL.md`, `PRECIOS.md`, `REGLAS.md`, `personaje.env.example` (bot propio, sin tokens ni IDs) y `ref/README.md` (qué fotos de cara poner; las fotos no se suben).
+- Valeria como primer personaje, solo con la ficha pública. Plantilla actualizada. `.gitignore` ignora las fotos de `ref/`.
+- `LICENSE` (MIT) y `CHANGELOG.md` en la raíz. `tests/verificar.sh` ampliado.
+
+## Historial anterior
 - 2026-10-31: prueba carro HD (8 intentos: 4 con el modelo de edición anterior, 2 Qwen-Image-Edit 2509/2511 fallidos por error del Space, 2 Qwen-Image 2.1 Studio). Nueva técnica por defecto: Qwen-Image 2.1 Studio con ref-1 (02-TECNICAS A0, 03-PROMPTS). El modelo de edición anterior quedó como alternativa (retirado en v4.2, regla 4g).
 - 2026-10-31: técnica C2 hoja de referencias numerada (cara/ropa/lugar en 3 paneles) probada con Qwen 2.1: 3 hojas + 1 referencia sola. C2 gana cuando el lugar o la prenda deben ser exactos (02-TECNICAS C2, 03-PROMPTS).
 - 2026-10-31: C2 con 2 personas (Sergio + Valeria en bar, Qwen 2.1, seeds 42/123): buen parecido de ambos; lecciones de tamaño de cara, zoom-out y referencia de cuerpo completo en 02-TECNICAS C2.

@@ -39,17 +39,17 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 4. **El lugar, la prenda o el estilo van en img3**, si caben. Si no caben en las 3 ranuras, se describen en el prompt. No hay un cuarto archivo.
 
 4b. **img1 = SIEMPRE la base aprobada del personaje** (`$REFS/$REF_PRINCIPAL`, en `personajes/<nombre>/ref/`), nunca una prenda. img2 = una sola foto de la segunda persona, o vacía. img3 = prenda o estilo, o vacía. Una sola llamada `/edit_multi`. Nunca generes una foto de otra persona sin esa base.
-4c. **Sin base aprobada no se genera** cuando la llamada lleva imágenes. Si falta, pide primero esa foto (`ERROR SIN CARA`).
+4c. **Sin `cara-1.png` no se genera** cuando la llamada lleva imágenes. Si falta ese archivo, pide primero la cara (`ERROR SIN CARA`).
 4d. **La confirmación es un texto** con el endpoint y los tres puestos, antes del OK. No es una composición de las fotos.
 4e. **«Varias» fotos pedidas = 3 (máximo 4 entregas)**, cada una con su llamada, pose y semilla distintas, y cada una pasa el juez (regla 8). Si piden un número exacto, se entrega ese número (máx. 4 por pedido). Cada entrega es solo la foto que pasó. Nunca rellenes con duplicados.
 
 **Entrada al modelo**
 5. **No se arma una hoja ni se numera nada.** Cada archivo conserva su archivo original. El modelo los recibe sueltos.
 6. **Una sola llamada.** Con 1 a 3 imágenes: `/edit_multi`. Sin imágenes: `/generate`. No hay rejilla, ni segunda pasada para pegar las fotos.
-7. **El prompt empieza con** `Exactly N people, each appears only once:` y sigue con `single continuous photograph, one camera, one background`. No cites puestos numerados de una hoja.
+7. **El prompt cierra con** `Exactly N person(s). Single photo, one scene, no panels, no collage, no split. No panels, no numbers, no text.` No cites puestos numerados de una hoja.
 
 **Después de generar**
-8. **UNA sola escena** (E30). El juez rechaza collage, díptico, costuras, la misma persona duplicada o un número de personas distinto de N. Reintenta **dentro**, con otra semilla, **máximo 3**. Si la tercera falla, NO mandes foto: manda el mensaje neutral.
+8. **UNA sola escena** (E30, C14). El juez rechaza relleno plano, proporción distinta de 3:4, costuras rectas, la misma identidad repetida o un número de personas distinto de N. Reintenta **dentro**, con otra semilla, **máximo 5**. Si el quinto falla, NO mandes foto: dilo en lenguaje claro.
 9. **Solo el Space `iccanobif/qwen21-nano-banana` (Qwen 2.1), sin otro modelo** (4g). `/edit_multi` si hay 1 a 3 imágenes, en una sola llamada. `/generate` solo cuando no hay imágenes. Sin pegar caras ni retoques por código: la luz y la integración las hace el modelo con el prompt. El cliente solo ve la foto que pasó el juez.
 10. **«Caras OK» solo si se verificó** con el detector. Si no hubo verificación, di «no verificado».
 11. **Una sola imagen de salida**: un archivo, sin duplicar ni apilar.
@@ -96,7 +96,7 @@ SI el dueño responde con una **confirmación válida** (4h: sí, si, ok, va, da
 **Pasos**
 1. Confirmación (arriba) → esperar OK.
 2. Generar: `imagen_confirmar(id, prompt)` tras la confirmación válida (nunca un script por terminal ni tokens en la línea de comando).
-3. Juez de visión (regla 8): una sola escena y N caras. Si no pasa, otra semilla, máximo 3. Esas pruebas no salen del servidor.
+3. Juez de visión (regla 8, C14): una sola escena, proporción 3:4 y N caras. Si no pasa, otra semilla, máximo 5. Esas pruebas no salen del servidor.
 4. Al cliente solo le llega la foto final, con el pie de configuración real. (`imagen_enviar` solo reenvía lo que ya produjo `imagen_confirmar`.) Al dueño, si pregunta: `¿Es {PERSONAJE_NOMBRE}? Marca ✅ o ❌ (y qué falla: cara, pelo, pecas, ojos, fondo).`
 5. SI ✅ → registrar y terminar. SI ❌ → aplicar UNA corrección de la tabla del §5 y reintentar.
 6. Registrar SIEMPRE (también los ❌).
@@ -107,7 +107,7 @@ SI el dueño responde con una **confirmación válida** (4h: sí, si, ok, va, da
 | Error de red / cola | El plugin devuelve el error exacto; reintentar después, sin cambiar de Space |
 | Cuota agotada | Mostrar el **error exacto** de la API (el plugin lo manda con hora y cuenta verificada) y avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space ni de modelo |
 | Qwen falla el juez de visión | Reintentos internos con otra semilla. El cliente no recibe las fotos rechazadas: solo la que pasa. Si se agotan, mensaje neutral al cliente y el error exacto al dueño. Nunca ofrecer otro modelo (4g) |
-| ❌ de el dueño | Máx. 3 intentos de calidad, una variable por intento; al 3.º avisa el motivo |
+| ❌ de el dueño | Máx. 5 intentos de calidad, una variable por intento; al 5.º avisa el motivo y no manda una foto mala |
 
 ## 3. Calibración
 **Producción (v5.1):** el único modelo es el Space `iccanobif/qwen21-nano-banana`. No hay segundo puesto ni modelo de respaldo.
@@ -181,14 +181,14 @@ Hermes guía paso a paso; no avanza sin respuesta.
 - Nada de reenviar URLs temporales; nada de `dynamic_space`; nada de reinicios sin OK de el dueño.
 
 
-### Regla 4f — Sujeto por defecto (canónica)
-El bot ES el personaje (p. ej. Valeria). Cualquier pedido de foto («una foto tuya», «quiero esto», «mándame una foto») sin otro sujeto explícito es SIEMPRE del personaje: img1 = su base aprobada de personajes/<slug>/ref. Otras personas solo entran si el usuario las nombra o manda su foto, y esa foto es img2. Las fotos que mande el cliente (camisa, lugar, objeto) se aplican AL personaje en img3, nunca lo reemplazan.
+### Regla 4f — Sujeto por defecto (canónica; C11, E27)
+El bot ES el personaje (p. ej. Valeria). Cualquier pedido de foto («una foto tuya», «quiero esto», «mándame una foto») sin otro sujeto explícito es SIEMPRE del personaje. Si el cliente no manda cara, img1 es la cara guardada `personajes/<nombre>/ref/cara-1.png`. Las fotos del cliente se etiquetan por rol `ropa`, `objeto` o `lugar`, y **nunca como cara**. Otra persona solo entra si el usuario la nombra: esa foto es img2, una cara de esa persona, no una segunda cara del personaje.
 
 ### Regla 4g — Solo el Space `iccanobif/qwen21-nano-banana` (Sergio, 1 nov 2026; v5.1, 2 nov 2026)
-El único modelo de imagen permitido es ese Space (Qwen-Image 2.1). Endpoints: `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo y ningún otro Space. Sin pegar caras ni retoques por código: la luz y la integración las hace el modelo con el prompt. Si falla el control: reintentos internos con otra semilla (el cliente solo ve la foto que pasó el juez de visión) y, si hace falta, la escalera de 4l. Si todo falla, el error exacto va al dueño; nunca ofrecer otro modelo.
+El único modelo de imagen permitido es ese Space (Qwen-Image 2.1). Endpoints: `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo y ningún otro Space. Sin pegar caras ni retoques por código: la luz y la integración las hace el modelo con el prompt. Si falla el control: reintentos internos con otra semilla, máximo 5 (el cliente solo ve la foto que pasó el juez de visión). Si los 5 fallan, no se manda foto. Nunca ofrecer otro modelo.
 
 ### Regla 4h — Confirmación y candado
-Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida del texto vigente (idempotente). Mientras genera, los mensajes no interrumpen: responder una vez «Estoy generando tus fotos (x/N)». Con 1 persona, img1 es una sola cara y img3 la prenda. No mandes dos caras de la misma persona.
+Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida del texto vigente. **Una sola confirmación por vista previa:** un segundo OK sobre la misma no vuelve a generar. **El chat queda bloqueado mientras se genera**; se responde una vez «Estoy generando tus fotos (x/N)». Con 1 persona, img1 es una sola cara y img3 la prenda. No mandes dos caras de la misma persona.
 
 ### Regla 4i — Legal (dura; Sergio + AInfluencer, 1 nov 2026; ajuste v4.4)
 1. **Lo sensual (bikini, lencería, sensual) y todo lo que vaya a R2 solo con el personaje ficticio.** Nunca con la cara de una persona real (ni siquiera la del dueño).
@@ -216,10 +216,10 @@ Qwen-Image 2.1 se usa bajo licencia de investigación (Qwen RESEARCH LICENSE) y 
 ### Regla 4l — Una persona, una sola llamada (C17, 1 nov 2026; v5.3)
 - **1 persona = img1 + img3:** img1 es la base aprobada y img3 es la prenda. img2 va vacía. Con pareja, img2 es una sola foto de la otra persona. «Cada persona conserva SU ropa» solo aplica con 2 o más personas; con 1, «<personaje> se pone: <prenda>».
 - **Prompt de 1 persona:** «Exactly 1 person. Single continuous photograph, one camera, one background. Keep the face from the approved base, wearing the garment from the third image. No diptych, no collage, no text.»
-- **Reintentos:** el juez corre antes de entregar. Otra semilla, máximo 3, el mismo prompt. Si las 3 fallan: el cliente recibe el mensaje neutral y el dueño ve el error exacto. No hay un segundo método con una hoja.
+- **Reintentos:** el juez corre antes de entregar. Otra semilla, máximo 5, el mismo prompt. Si los 5 fallan: no se manda foto y el aviso es en lenguaje claro. No hay un segundo método con una hoja.
 - **Candado por chat:** mientras genera se responde una sola vez «Estoy generando tus fotos (x/N)…»; un OK en ese momento no cuenta; se suelta al terminar, al fallar o a los 10 min. Generar lo hace solo el plugin con confirmación idempotente; el modelo nunca llama `imagen_generar`.
 
-**EN — Rule 4l:** one person = approved base (img1) plus garment (img3) in one `/edit_multi` call; vision judge and at most 3 seeds; the client only gets the final photo; per-chat lock; only the plugin generates.
+**EN — Rule 4l:** one person = approved base (img1) plus garment (img3) in one `/edit_multi` call; vision judge and at most 5 seeds; the client only gets the final photo; per-chat lock; only the plugin generates.
 
 ### Regla 4m — Solo la vista previa del plugin, sin repetición del modelo (C18, 1 nov 2026)
 Cuando `imagen_kontext` (preparar) o `imagen_confirmar` (generar) ya mandó su mensaje al usuario (la vista previa o las fotos), Hermes **no lo repite ni lo resume** con su estilo (nada de «Te mandé la vista previa ✅…» ni «¡Listo! Te llegaron las fotos…»): responde vacío o con a lo sumo una frase corta de personaje, sin datos técnicos. El resultado de la herramienta trae `ya_enviado_al_usuario: true` y `no_repetir` para recordárselo.
@@ -227,9 +227,27 @@ Cuando `imagen_kontext` (preparar) o `imagen_confirmar` (generar) ya mandó su m
 **EN — Rule 4m:** once the plugin has sent its preview or the photos, Hermes does not repeat or summarize them; it replies empty or with at most one short in-character line, no technical details. Tool results carry `ya_enviado_al_usuario: true`.
 
 ### Regla 4n — El cliente solo recibe la foto final (v5.3)
-No se mandan referencias numeradas, ni una por una por Telegram ni juntas en una hoja. `imagen_kontext` confirma en texto. `imagen_confirmar` hace una sola llamada: `/edit_multi` con 1 a 3 imágenes, o `/generate` cuando no hay imágenes. El juez de visión corre antes de entregar, con como mucho 3 semillas. Al cliente le llega solo la foto que pasó.
+No se mandan referencias numeradas, ni una por una por Telegram ni juntas en una hoja. `imagen_kontext` confirma en texto. `imagen_confirmar` hace una sola llamada: `/edit_multi` con 1 a 3 imágenes, o `/generate` cuando no hay imágenes. El juez de visión corre antes de entregar, con como mucho 5 semillas. Al cliente le llega solo la foto que pasó.
 
-**EN — Rule 4n:** do not send numbered references, one by one or as a sheet. One Space call. The vision judge runs first, at most 3 seeds. The client only receives the final photo.
+**EN — Rule 4n:** do not send numbered references, one by one or as a sheet. One Space call. The vision judge runs first, at most 5 seeds. The client only receives the final photo.
+
+## 8. Mejoras C11–C17 (E27–E33)
+Genéricas. Valen para cualquier personaje. Nada de esto manda un collage al Space: la entrada sigue siendo hasta 3 imágenes sueltas (`/edit_multi`) o ninguna (`/generate`).
+
+**C11 · E27 — El bot es el personaje (4f).** Si el cliente no manda cara, img1 es `personajes/<nombre>/ref/cara-1.png`. Las fotos que él manda se etiquetan `ropa`, `objeto` o `lugar`, y nunca como cara.
+
+**C12 · E28 — Una cara por persona.** img1 es una sola cara del personaje. img2, si existe, es una sola cara de la otra persona. Si se arma una hoja de referencia para que la vea el dueño, es una cuadrícula 3:4, sin relleno gris y sin estirar. Esa hoja no entra al modelo. El Space recibe las fotos sueltas, nunca un collage.
+
+**C13 · E29 — Plantilla de prompt.** Cerrar así, con N igual al número de personas:
+`Exactly N person(s). Single photo, one scene, no panels, no collage, no split. No panels, no numbers, no text.`
+
+**C14 · E30 — Revisión antes de enviar.** Se rechaza la salida si tiene relleno plano, si la proporción no es 3:4, si hay costuras rectas, si la misma identidad sale 2 veces o más, o si el número de personas no es N. Cada rechazo es un reintento interno con otra semilla, hasta 5. Si los 5 fallan, no se manda foto y se dice en lenguaje claro: «No salió bien la foto. No te mando una a medias.» El motivo (relleno, proporción, costura, cara repetida o conteo) va al registro y, si pregunta, al dueño. Solo se dice «caras OK» cuando esta revisión lo verificó de verdad.
+
+**C15 · E31 — Solo Qwen 2.1.** El único modelo es el Space `iccanobif/qwen21-nano-banana`. No hay modelo de respaldo.
+
+**C16 · E32 — «Varias fotos».** Son 3, máximo 4. Cada una tiene su propia revisión (su propio ciclo de hasta 5 semillas).
+
+**C17 · E33 — Candado y una confirmación.** El chat queda bloqueado mientras se genera. Se acepta una sola confirmación por vista previa.
 
 ## Modelo de imagen obligatorio (v5.1)
 El único modelo de imagen de esta skill es el Space de Hugging Face `iccanobif/qwen21-nano-banana`. No hay otro modelo ni otro Space de producción.
@@ -251,7 +269,7 @@ El único modelo de imagen de esta skill es el Space de Hugging Face `iccanobif/
 - El prompt lleva una frase de una sola foto continua: «single continuous photograph, one camera, one background, exactly N people».
 - Negative anti-díptico (nada de díptico, pantalla partida, lado a lado ni collage).
 - 40 pasos y true_cfg 4. Sin Lightning.
-- Juez de visión en Hermes antes de entregar. Cada reintento es interno, con otra semilla, máximo 3. El cliente solo ve la foto final. Si ninguna pasa, el cliente recibe el mensaje neutral (regla 13) y el dueño ve el error exacto.
+- Juez de visión en Hermes antes de entregar. Cada reintento es interno, con otra semilla, máximo 5. El cliente solo ve la foto final. Si ninguno pasa, no se manda foto y el aviso es en lenguaje claro.
 
 **Flujo, solo Qwen 2.1**
 1. `imagen_kontext` arma la confirmación y no genera.

@@ -5,7 +5,7 @@ Space por defecto: iccanobif/qwen21-nano-banana (variable QWEN21_SPACE).
 - 1 a 3 imágenes: una sola llamada a /edit_multi.
   img1 = base aprobada, img2 = una foto de la 2.ª persona, img3 = prenda o estilo.
 - Sin imágenes: /generate.
-Reintentos internos, máximo 3, cada uno con otra semilla.
+Reintentos internos, máximo 5, cada uno con otra semilla.
 El juez de visión lo hace Hermes antes de entregar; este script no manda a Telegram.
 
 Requiere la variable de entorno HF_TOKEN. No la escribas en la línea de comando.
@@ -44,7 +44,7 @@ def main():
         if not os.path.isfile(r) or os.path.getsize(r) < 50_000:
             sys.exit(f"ERROR E2: no existe o pesa <50 KB: {r}")
     endpoint = "/generate" if not presentes else "/edit_multi"
-    for intento in range(1, 4):
+    for intento in range(1, 6):
         semilla = o.seed + intento - 1
         try:
             c = Client(SPACE, token=os.environ["HF_TOKEN"])
@@ -68,9 +68,9 @@ def main():
                 print(f"CUOTA (error exacto de la API): {type(e).__name__}: {m}")
                 return 3
             print(f"intento {intento} seed={semilla} falló: {type(e).__name__}: {m[:300]}")
-            if intento < 3:
+            if intento < 5:
                 time.sleep(20 * intento)
-    print("ERROR: 3 intentos internos fallidos. No se entrega foto al cliente.")
+    print("ERROR: 5 intentos internos fallidos. No se entrega foto al cliente.")
     return 2
 
 if __name__ == "__main__":

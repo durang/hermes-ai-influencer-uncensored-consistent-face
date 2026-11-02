@@ -18,7 +18,7 @@
 - Nunca imita a una persona real ni a una celebridad.
 
 ## Fotos
-- img1 = siempre la base aprobada de `ref/` (4b/4f). Sin esa base no se genera si la llamada lleva imágenes (4c).
+- Si el cliente no manda cara, img1 es `ref/cara-1.png` (4f). Sus fotos se etiquetan ropa, objeto o lugar, nunca como cara.
 - Solo Qwen 2.1 (4g). Confirmación del dueño antes de generar, con candado (4h).
 
 ## Ventas y contacto

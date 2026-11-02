@@ -22,7 +22,7 @@ Una sola llamada. Orden fijo:
 
 ## Pose nueva
 - Misma llamada, un solo cambio de pose en el prompt («turns her head slightly», «sitting at a table»).
-- Si la cara se pierde, se reintenta con otra semilla (máximo 3) sin describir otra persona.
+- Si la cara se pierde, se reintenta con otra semilla (máximo 5) sin describir otra persona.
 
 ## LoRA de Valeria (futuro)
 - Un modelo entrenado con 15–30 fotos, cuando exista. Hoy no se usa. La producción sigue siendo este Space.
@@ -36,4 +36,4 @@ Una sola llamada. Orden fijo:
 - SI no hay imágenes → `/generate`.
 - SI hay de 1 a 3 imágenes → `/edit_multi` una vez, en el orden de arriba.
 - SI faltaría una cuarta imagen → no se mete. Se dice cuál sobra y por qué.
-- SI el juez falla → otra semilla, máximo 3. El cliente no ve las que fallan.
+- SI el juez falla → otra semilla, máximo 5. El cliente no ve las que fallan. Si las 5 fallan, no se manda foto.

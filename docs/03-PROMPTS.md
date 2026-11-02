@@ -27,8 +27,8 @@ Exactly 2 people, each appears only once. Single continuous photograph, one came
 | ropa genérica para 2 personas | la ropa de cada persona, dicha en el prompt |
 | "panel 1", "panel 2", números de una hoja | no hace falta: el puesto ya es img1, img2 o img3 |
 
-## Cierre
-`Single continuous photograph, one camera, one background, exactly N people. No diptych, no split screen, no collage, no text.`
+## Cierre (C13, E29)
+`Exactly N person(s). Single photo, one scene, no panels, no collage, no split. No panels, no numbers, no text.`
 
 ## Por qué funcionan
 - "Keep her face exactly the same" va **primero**: el modelo prioriza el inicio.

@@ -2,7 +2,7 @@
 
 Hermes llama al Space `iccanobif/qwen21-nano-banana`. No manda referencias numeradas por Telegram, ni una por una ni en una hoja. El modelo no recibe hojas ni collages.
 
-Regla: **no se avanza si la compuerta no da ✅.** El juez de visión corre antes de entregar. Reintentos internos con otra semilla, **máximo 3**. El cliente solo recibe la foto final.
+Regla: **no se avanza si la compuerta no da ✅.** El juez de visión corre antes de entregar. Reintentos internos con otra semilla, **máximo 5**. El cliente solo recibe la foto final.
 
 ---
 ## Paso 1 — Entender la petición
@@ -50,9 +50,9 @@ El único modelo es ese Space (regla 4g). Usa /generate cuando no hay imágenes.
 **Compuerta 5:** ✅ el Space devolvió un archivo. ❌ error exacto al registro; no se cambia de modelo.
 
 ## Paso 6 — Juez de visión, antes de entregar
-Hermes mira la salida (cara, ropa, número de personas, una sola escena, sin díptico). Si no pasa, reintenta **dentro**, con otra semilla, hasta 3 veces en total. Esas pruebas no se mandan.
+Hermes mira la salida antes de enviar (C14, E30): relleno plano, proporción distinta de 3:4, costuras rectas, la misma identidad repetida, o un número de personas distinto de N. Si no pasa, reintenta **dentro**, con otra semilla, hasta 5 veces en total. Esas pruebas no se mandan.
 
-**Compuerta 6:** ✅ una salida pasó. ❌ las 3 fallaron → el cliente recibe el mensaje neutral; el dueño ve el error exacto. No se manda una foto mala.
+**Compuerta 6:** ✅ una salida pasó y, solo entonces, se puede decir «caras OK». ❌ las 5 fallaron → no se manda foto. Al cliente: «No salió bien la foto. No te mando una a medias.» El motivo queda en el registro.
 
 ## Paso 7 — Entregar solo la foto final
 - El cliente ve únicamente la foto que pasó el juez.
@@ -79,7 +79,7 @@ Hermes mira la salida (cara, ropa, número de personas, una sola escena, sin dí
 - [ ] Como mucho 3 imágenes, en una sola llamada, en el orden img1 / img2 / img3
 - [ ] Nada de hoja ni de fotos numeradas una por una
 - [ ] Confirmación válida del dueño
-- [ ] Juez de visión, máximo 3 semillas
+- [ ] Juez de visión, máximo 5 semillas
 - [ ] El cliente solo vio la foto final
 - [ ] Quedó registrado
 

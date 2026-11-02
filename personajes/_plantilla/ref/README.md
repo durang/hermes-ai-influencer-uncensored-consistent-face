@@ -5,7 +5,7 @@ Aquí van las fotos de referencia **en la instalación** (`/opt/data/guia-imagen
 ## Qué fotos poner
 | Archivo | Qué debe tener |
 |---|---|
-| `ref-1-*.png` | **Base aprobada = img1** (4b). Frontal, bien iluminada, cabeza completa con pelo y hombros, mirando a la lente, sin lentes ni manos en la cara, fondo simple. PNG a tamaño completo |
+| `cara-1.png` | **Cara guardada = img1** (4f, C11). Si el cliente no manda cara, se usa este archivo. Frontal, bien iluminada, cabeza completa con pelo y hombros, mirando a la lente, sin lentes ni manos en la cara, fondo simple. PNG a tamaño completo |
 | `ref-2…ref-6` | La misma cara en 3/4, perfil, otra luz (día o noche) y otra expresión (sonrisa) |
 | `ref-7…ref-12` | Escenas cotidianas **con ropa** (café, carro, gym, calle) para variedad |
 | Hoja de personaje / collage | Solo para comparar rasgos; **nunca** como entrada |

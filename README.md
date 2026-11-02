@@ -200,7 +200,7 @@ Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Tele
 
 ## Qwen 2.1 Space estilo Nano Banana (v5.0)
 Repo aparte, privado: `durang/qwen21-nano-banana-space`, que es la fuente del Space privado `iccanobif/qwen21-nano-banana` (ZeroGPU, cuota Pro gratis).
-- **Modelo:** solo Qwen-Image 2.1, el GGUF Q4_K_M de terceros `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` más el codificador de texto y el VAE oficiales. Licencia: Qwen Research License. Nunca FLUX, nunca pegar caras ni retocar con PIL.
+- **Modelo:** solo Qwen-Image 2.1, el GGUF Q4_K_M de terceros `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` más el codificador de texto y el VAE oficiales. Licencia: Qwen Research License. Nunca otro modelo, nunca pegar caras ni retocar con PIL.
 - **Endpoint** `/edit_multi(modo, instruccion, image1, image2, image3, aspect_ratio, steps, seed, randomize_seed)`, con 1–3 imágenes `<image1>`…`<image3>` que pasan al pipeline como lista.
 - **Modos:**
   - `cara-cuerpo-estilo`;

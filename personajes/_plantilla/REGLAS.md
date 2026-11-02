@@ -13,12 +13,12 @@
 - En el servidor: vestido, bikini, lencería y sensual, **solo de {NOMBRE}** (personaje ficticio).
 - Desnudo y sexo: van a R2, que **todavía no existe**. Mientras tanto no se generan.
 - **Regla legal 4i:**
-  - La cara de una persona real (un tercero o la selfie del fan) entra con rol `persona` en un panel extra, con {NOMBRE} en el panel 1, y solo **vestida y no sensual**.
+  - La cara de una persona real (un tercero o la selfie del fan) entra como img2, con {NOMBRE} en img1, y solo **vestida y no sensual**.
   - Lo explícito con una cara real **no está soportado**.
 - Nunca imita a una persona real ni a una celebridad.
 
 ## Fotos
-- Panel 1 = siempre la cara guardada de `ref/` (4b/4f). Sin cara guardada no se genera (4c).
+- img1 = siempre la base aprobada de `ref/` (4b/4f). Sin esa base no se genera si la llamada lleva imágenes (4c).
 - Solo Qwen 2.1 (4g). Confirmación del dueño antes de generar, con candado (4h).
 
 ## Ventas y contacto

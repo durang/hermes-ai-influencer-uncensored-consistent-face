@@ -19,8 +19,8 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 ```
 | Herramienta | Estado | Uso |
 |---|---|---|
-| `imagen_kontext(referencias, tipos, …)` | **Paso 1 — NO genera.** Arma la hoja (panel 1 = cara guardada), manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» y espera el OK | Confirmación |
-| `imagen_confirmar(id, prompt)` | **Paso 2 — genera con Qwen-Image 2.1 Studio** solo si el último mensaje verificado del dueño es una confirmación válida (4h). Arma el pie de foto con la config real, registra y borra | Generar (A0 y C2) |
+| `imagen_kontext(referencias, tipos, …)` | **Paso 1 — NO genera.** Arma la hoja (panel 1 = cara guardada), manda «Usaré estas referencias y el Space iccanobif/qwen21-nano-banana (Qwen-Image 2.1)…» y espera el OK | Confirmación |
+| `imagen_confirmar(id, prompt)` | **Paso 2 — genera solo en el Space `iccanobif/qwen21-nano-banana`** (`/edit_multi` con 1–3 imágenes, o `/generate`) si el último mensaje verificado del dueño es una confirmación válida (4h). Arma el pie de foto con la config real, registra y borra | Generar (A0 y C2) |
 | `imagen_cancelar()` | Cancela la vista previa y borra temporales | Cancelar |
 | `python3 $TOOLS/armar_hoja.py` | Lo usa el plugin; también a mano (curso) | Hoja numerada C2 |
 | `imagen_enviar(ruta)` | Solo reenvía archivos producidos por `imagen_confirmar` | Reenviar |
@@ -31,9 +31,9 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 
 ## 0b. Reglas duras (v4.4 — bar 31-oct + E27–E31 + 4b–4i del 1-nov-2026)
-> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo Qwen, **4h** confirmación y candado, **4l** 1 persona/escalera Qwen (C17), **4m** sin repetición (C18), **4n** vista previa = solo la hoja (C19), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
+> Índice: 1–14 abajo · **4b–4e** (panel 1, sin cara, confirmación cara+prenda, «varias») abajo · **4f** sujeto por defecto, **4g** solo el Space `iccanobif/qwen21-nano-banana` (Qwen 2.1), **4h** confirmación y candado, **4l** 1 persona/escalera Qwen (C17), **4m** sin repetición (C18), **4n** vista previa = solo la hoja (C19), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
 **Antes de generar**
-1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda «Usaré estas referencias y el modelo Qwen-Image 2.1 Studio…» con la hoja adjunta. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
+1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda «Usaré estas referencias y el Space iccanobif/qwen21-nano-banana (Qwen-Image 2.1)…» con la hoja adjunta. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
 2. **Cuenta las imágenes recibidas.** Di `Recibí N imágenes: 1=…, 2=…, 3=…` y usa `armar_hoja.py --recibidas N`. Nunca descartes una en silencio; si no usarás alguna, dilo antes y explica por qué.
 3. **Misma ropa por persona.** Cada persona conserva la ropa de SU referencia salvo que el dueño pida otra; el prompt la describe por persona (ej.: `the man from panel 1 wearing his dark grey t-shirt`). Nunca ropa genérica.
 4. **El lugar va en su propio panel** (`--lugar`, siempre el último) y el prompt lo cita: `in the {lugar} from panel N`.
@@ -50,12 +50,12 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 **Después de generar**
 8. **UNA sola escena** (E30). Rechaza la salida si es collage, copia de la hoja, tiene costuras/bordes/barras, la misma persona duplicada o un número de personas distinto de N. Reintenta con **seed nueva**, hasta **3 intentos**. Si el 3.º falla, NO mandes foto: manda el mensaje neutral.
-9. **Solo Qwen 2.1, sin modelo de respaldo** (4g). Si falla el control: reintentos con seed nueva y luego hoja simple; si todo falla, error exacto y preguntar qué cambiar.
+9. **Solo el Space `iccanobif/qwen21-nano-banana` (Qwen 2.1), sin otro modelo** (4g). Endpoints `/edit_multi` (1 a 3 imágenes) y `/generate`. Sin pegar caras ni retoques por código: la luz y la integración las hace el modelo con el prompt. Si falla el control: reintentos internos con otra semilla; el cliente solo ve la foto que pasó el juez de visión.
 10. **«Caras OK» solo si se verificó** con el detector. Si no hubo verificación, di «no verificado».
 11. **Una sola imagen de salida**: un archivo, sin duplicar ni apilar.
 
 **Herramientas y errores**
-12. **Única vía: `imagen_kontext` → `imagen_confirmar`** (alias `imagen_qwen21`; Qwen 2.1, 40 pasos). Nunca `dynamic_space`, el navegador ni scripts por terminal (bloqueado en código, E11/E12). Antes de hablar de cuota, revisa el **error exacto** de la API (en el log/05-REGISTRO) y confirma que se usó HF_TOKEN.
+12. **Única vía: `imagen_kontext` → `imagen_confirmar`** (alias `imagen_qwen21`; solo el Space `iccanobif/qwen21-nano-banana`, 40 pasos, true_cfg 4). Nunca `dynamic_space`, el navegador ni scripts por terminal (bloqueado en código, E11/E12). Antes de hablar de cuota, revisa el **error exacto** de la API (en el log/05-REGISTRO) y confirma que se usó HF_TOKEN.
 13. **Al cliente nunca le hables de token, GPU, API, cuota ni nombres de modelos** (E29). Mensaje neutral: «Tuve un problema al generar la foto, lo intento de nuevo en un momento.» El error exacto va solo al registro y, si lo pide, al dueño en modo jefe.
 
 **Almacenamiento**
@@ -86,7 +86,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 ```
 📸 Voy a generar: {resumen de la petición}
 🧩 Referencias: {$REF_PRINCIPAL-calle.png | hoja C2: 1=…, 2=…, 3=…}
-🤖 Modelo: Qwen-Image 2.1 Studio · seed {42} · {40 pasos, Portrait 3:4}
+🤖 Modelo: Space iccanobif/qwen21-nano-banana · Qwen-Image 2.1 · seed {42} · {40 pasos, true_cfg 4}
 ✍️ Prompt: "{prompt}"
 ¿Le doy? Responde OK, o dime qué cambio (referencia, modelo o prompt).
 ```
@@ -106,19 +106,20 @@ SI el dueño responde con una **confirmación válida** (4h: sí, si, ok, va, da
 |---|---|
 | Error de red / cola | El plugin devuelve el error exacto; reintentar después, sin cambiar de Space |
 | Cuota agotada | Mostrar el **error exacto** de la API (el plugin lo manda con hora y cuenta verificada) y avisar: `Se acabó la cuota de GPU, reintento a las {hora}.` No cambiar de Space ni de modelo |
-| Qwen falla 3 veces | 2 intentos más con hoja simple (1 cara + prenda, «single photo, no panels»); si falla, mostrar el error exacto y preguntar qué cambiar. Nunca ofrecer otro modelo (4g) |
+| Qwen falla el juez de visión | Reintentos internos con otra semilla. El cliente no recibe las fotos rechazadas: solo la que pasa. Si se agotan, mensaje neutral al cliente y el error exacto al dueño. Nunca ofrecer otro modelo (4g) |
 | ❌ de el dueño | Máx. 3 intentos de calidad, una variable por intento; al 3.º avisa el motivo |
 
 ## 3. Calibración
-**Ranking (pruebas 31-oct-2026)**
-1. **Qwen-Image 2.1 Studio** (`assembledchaos/qwen-image-2-1-studio`) — principal. Cara más fiel. Piel algo lisa, 1 MP (falta upscaler para HD real).
-2. Qwen-Image-Edit 2509/2511 — Spaces oficiales con TypeError (31-oct). No usar (4g).
-3. PuLID — malo: "otra mujer parecida", ojos azules. (Otros modelos de edición probados el 31-oct quedaron retirados por la regla 4g.)
+**Producción (v5.1):** el único modelo es el Space `iccanobif/qwen21-nano-banana`. No hay segundo puesto ni modelo de respaldo.
+
+**Historial (31-oct-2026, no usar):** Qwen-Image-Edit 2509/2511 salió con TypeError. PuLID dio «otra mujer parecida». El Space comunitario `assembledchaos/qwen-image-2-1-studio` quedó fuera de producción. La regla 4g los retira todos.
 
 **Parámetros (copiar)**
 ```
-QWEN21:  modo="Edit an image" steps=40 seed=42 randomize=False aspect="Portrait · 3:4" (o "Square · 1:1") → usar r[1]
-HOJA C2: proporción original por panel (sin estirar); entrada Qwen 1152x1536 2 columnas sin relleno; --zoom 1.3–1.6 opcional en panel 1
+SPACE: iccanobif/qwen21-nano-banana
+/edit_multi: modo, instruccion, image1, image2, image3, aspect_ratio, steps=40, seed, randomize_seed; true_cfg 4; 1 a 3 imágenes
+/generate: una imagen; steps=40; true_cfg 4
+HOJA C2: proporción original por panel (sin estirar); entrada 1152x1536 2 columnas sin relleno; --zoom 1.3–1.6 opcional en panel 1
 ```
 **Calibrar un modelo nuevo** (solo AInfluencer, fuera de producción; cambiar el modelo de producción requiere decisión del dueño y actualizar la regla 4g)
 1. Fija referencia (`$REF_PRINCIPAL`), prompt de prueba (carro, con ropa) y seed 42.
@@ -183,8 +184,8 @@ Hermes guía paso a paso; no avanza sin respuesta.
 ### Regla 4f — Sujeto por defecto (canónica)
 El bot ES el personaje (p. ej. Valeria). Cualquier pedido de foto («una foto tuya», «quiero esto», «mándame una foto») sin otro sujeto explícito es SIEMPRE del personaje: panel 1 = su cara guardada de personajes/<slug>/ref. Otras personas solo entran si el usuario las nombra o manda su foto con rol persona. Las fotos que mande el cliente (camisa, lugar, objeto) se aplican AL personaje, nunca la reemplazan.
 
-### Regla 4g — Solo Qwen 2.1 (Sergio, 1 nov 2026)
-No se usa FLUX/Kontext ni ningún otro modelo. Si Qwen falla el control: 3 reintentos con seed nueva; luego 2 con hoja simple (1 cara + prenda) y prompt «single photo, no panels». Si todo falla, mostrar el error exacto y preguntar qué cambiar; nunca ofrecer otro modelo.
+### Regla 4g — Solo el Space `iccanobif/qwen21-nano-banana` (Sergio, 1 nov 2026; v5.1, 2 nov 2026)
+El único modelo de imagen permitido es ese Space (Qwen-Image 2.1). Endpoints: `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo y ningún otro Space. Sin pegar caras ni retoques por código: la luz y la integración las hace el modelo con el prompt. Si falla el control: reintentos internos con otra semilla (el cliente solo ve la foto que pasó el juez de visión) y, si hace falta, la escalera de 4l. Si todo falla, el error exacto va al dueño; nunca ofrecer otro modelo.
 
 ### Regla 4h — Confirmación y candado
 Confirmaciones válidas: sí, si, ok, va, dale, ándale (sin importar mayúsculas/acentos). Solo el plugin dispara la generación tras una confirmación válida de una vista previa vigente (idempotente). Mientras genera, los mensajes no interrumpen: responder una vez «Estoy generando tus fotos (x/N)». Con 1 persona usar UNA sola cara + prenda (dos caras de la misma persona hacen que Qwen copie la hoja).
@@ -230,30 +231,47 @@ Con técnica C2 (varias referencias), la vista previa que manda `imagen_kontext`
 
 **EN — Rule 4n:** with C2 the preview is a single image, the numbered sheet with its caption; the separate uncaptioned reference album is no longer sent. A0 is unchanged.
 
-## Qwen 2.1 Space estilo Nano Banana (v5.0)
-Repo aparte, privado: `durang/qwen21-nano-banana-space`, que es la fuente del Space privado `iccanobif/qwen21-nano-banana` (ZeroGPU, cuota Pro gratis).
-- **Modelo:** solo Qwen-Image 2.1, el GGUF Q4_K_M de terceros `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` más el codificador de texto y el VAE oficiales. Licencia: Qwen Research License. Nunca FLUX, nunca pegar caras ni retocar con PIL.
-- **Endpoint** `/edit_multi(modo, instruccion, image1, image2, image3, aspect_ratio, steps, seed, randomize_seed)`, con 1–3 imágenes `<image1>`…`<image3>` que pasan al pipeline como lista.
-- **Modos:**
-  - `cara-cuerpo-estilo`;
-  - `solo-ropa`;
-  - `pareja-paso-A`, luego `dos-personas` (paso B) y después `pareja-paso-C`;
-  - `estilo`;
-  - `reiluminar`;
-  - `libre`.
-- **Reglas:**
-  - máximo 3 imágenes y nunca hojas ni collages;
-  - img1 es la base aprobada de Valeria, img2 es UNA foto de la segunda persona y img3 es opcional (prenda o estilo);
-  - la salida sale del tamaño de img1;
-  - un cambio por paso, repitiendo lo que se conserva, con posiciones explícitas;
-  - «single continuous photograph, one camera, one background, exactly N people»;
-  - la luz se cambia solo con el prompt;
-  - negative anti-díptico y true_cfg 4.0 si el pipeline los acepta;
-  - 40 pasos y sin Lightning;
-  - juez de visión en Hermes antes de entregar, con otra semilla en cada reintento.
-- **Deploy:**
-  1. Haz los cambios y el push al repo `qwen21-nano-banana-space`, rama `main`.
-  2. El workflow `.github/workflows/sync-to-hf.yml` empuja al Space usando el secret de repo `HF_TOKEN` (token de escritura de HF). Si el secret falta, el workflow falla a propósito.
-  3. El Space reconstruye; espera a que esté en Running.
-  4. En Hermes, `qwen21_recetas.QWEN_MULTI["space"]` apunta al Space y `RECETA="multi"`.
-  Nunca edites el Space a mano: la fuente es el repo.
+## Modelo de imagen obligatorio (v5.1)
+El único modelo de imagen de esta skill es el Space de Hugging Face `iccanobif/qwen21-nano-banana`. No hay otro modelo ni otro Space de producción.
+- **Pesos:** Qwen-Image 2.1, el GGUF Q4_K_M de terceros `abenzerps/Qwen-Image-2.1-Uncensored-GGUF`, más el codificador de texto y el VAE oficiales. Licencia: Qwen Research License.
+- **Endpoints, los dos en ese Space:**
+  - `/edit_multi(modo, instruccion, image1, image2, image3, aspect_ratio, steps, seed, randomize_seed)` con 1 a 3 imágenes. `<image1>`…`<image3>` entran al pipeline como lista. Una imagen también puede ir por aquí.
+  - `/generate` cuando la llamada es de una sola imagen.
+- **Prohibido:** cualquier otro modelo, pegar caras, componer o retocar por código (incluido PIL). La luz y la integración de las personas las hace el modelo con el prompt.
+- **Llamada:** solo `imagen_kontext` → `imagen_confirmar`. `qwen21_recetas.QWEN_MULTI["space"]` = `iccanobif/qwen21-nano-banana` y `RECETA="multi"`.
+
+## Proyecto: reglas, flujo y deploy (v5.1)
+**Modos:** `cara-cuerpo-estilo`; `solo-ropa`; `pareja-paso-A`, luego `dos-personas` (paso B) y después `pareja-paso-C`; `estilo`; `reiluminar`; `libre`.
+
+**Reglas tipo Nano Banana**
+- Máximo 3 imágenes. Nunca hojas ni collages como entrada del Space: img1, img2 e img3 son fotos sueltas.
+- img1 = el personaje aprobado (la base que ya pasó el ✅; en el ejemplo, Valeria). img2 = una sola foto de la segunda persona. img3 = opcional (prenda o estilo).
+- La salida sale del tamaño de img1.
+- Pareja en tres pasos, un cambio por paso, repitiendo lo que se conserva y con posiciones explícitas: A (`pareja-paso-A`), B (`dos-personas`), C (`pareja-paso-C`).
+- El prompt lleva una frase de una sola foto continua: «single continuous photograph, one camera, one background, exactly N people».
+- Negative anti-díptico (nada de díptico, pantalla partida, lado a lado ni collage).
+- 40 pasos y true_cfg 4. Sin Lightning.
+- Juez de visión en Hermes antes de entregar. Cada reintento es interno y usa otra semilla. El cliente solo ve la foto que pasó. Si ninguna pasa, el cliente recibe el mensaje neutral (regla 13) y el dueño ve el error exacto.
+
+**Flujo, solo Qwen 2.1**
+1. `imagen_kontext` arma la confirmación y no genera.
+2. Tras una confirmación válida (4h), `imagen_confirmar` llama solo a ese Space: `/generate` con 1 imagen, `/edit_multi` con 1 a 3.
+3. El juez de visión corre antes de enviar. Los fallos no salen del servidor hacia el cliente.
+4. Nada de `dynamic_space`, navegador, scripts por terminal ni otro modelo.
+
+**Deploy: primero el repo, después el Space**
+El Space no se edita a mano. La fuente es el repo privado `https://github.com/durang/qwen21-nano-banana-space` (si aún no existe, se crea privado antes del primer push).
+1. Cambios y push a `main` de ese repo.
+2. `.github/workflows/sync-to-hf.yml` empuja al Space `iccanobif/qwen21-nano-banana` con el secret de repositorio `HF_TOKEN` (token de escritura de Hugging Face; solo el nombre, nunca el valor). Si el secret falta, el workflow falla a propósito.
+3. El Space se reconstruye. Se espera a que quede en Running.
+4. Hermes apunta `qwen21_recetas.QWEN_MULTI["space"]` a ese Space y `RECETA="multi"`.
+
+Así se conectan: el repo es la fuente, la Action es el puente, el Space es el único sitio donde corre el modelo, y Hermes solo lo llama.
+
+## Configuración para principiantes (v5.1)
+Sirve para usar el Space en tu cuenta, sin tocar el repo privado del curso. No pegues tokens en el chat, en git ni en capturas. En `.env` y en GitHub solo va el nombre `HF_TOKEN`.
+
+1. **Cuenta y Pro.** Entra a Hugging Face. ZeroGPU gasta la cuota de quien llama. El plan Pro sube esa cuota; sin Pro se agota antes. El hardware del Space es ZeroGPU, no una GPU de pago.
+2. **Duplicar el Space.** Abre `https://huggingface.co/spaces/iccanobif/qwen21-nano-banana`. Si es privado y no tienes acceso, pídeselo al dueño: sin acceso no se puede duplicar. En el menú del Space elige **Duplicate this Space**. Dueño: tu usuario. Nombre: el que quieras. Hardware: **ZeroGPU**. Visibilidad: privada, recomendado. Espera a que quede en Running. Tu copia es `tu-usuario/tu-nombre`. La Action del repo del curso solo actualiza `iccanobif/qwen21-nano-banana`; tu copia no recibe esos push salvo que armes tu propio workflow.
+3. **Token fine-grained con escritura.** Settings → Access Tokens → Create new token → tipo **Fine-grained**. Incluye ese Space (el duplicado, o el original si tienes acceso) con permiso de **escritura**. Cópialo una sola vez. En la máquina de Hermes va en `.env` como `HF_TOKEN`. En el repo de deploy, el mismo nombre es el secret de GitHub Actions (`Settings → Secrets and variables → Actions`). Un token de solo lectura no sirve para que la Action sincronice el Space.
+4. **Decirle a Hermes cuál Space usar.** `qwen21_recetas.QWEN_MULTI["space"]` = `tu-usuario/tu-nombre` (o el Space del curso, si llamas a ese) y `RECETA="multi"`. Reinicia solo con el OK del dueño.

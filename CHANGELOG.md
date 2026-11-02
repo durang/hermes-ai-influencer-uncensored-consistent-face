@@ -1,6 +1,12 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v5.1 · 2026-11-02
+- El Space `iccanobif/qwen21-nano-banana` pasa a ser el modelo de imagen obligatorio de la skill: el único permitido, con `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo. Sin pegar caras ni retoques por código; la luz y la integración las hace el modelo con el prompt. Regla 4g actualizada.
+- Queda documentado el proyecto completo: reglas tipo Nano Banana (máximo 3 imágenes; img1 = personaje aprobado; img2 = una foto de la segunda persona; img3 opcional; salida del tamaño de img1; pareja en pasos A/B/C; frase de una sola foto continua; negative anti-díptico; 40 pasos y true_cfg 4; juez de visión y reintentos internos con otra semilla, de modo que el cliente solo ve la foto buena), el flujo solo con Qwen 2.1, y el deploy desde el repo primero.
+- Conexión: push a `https://github.com/durang/qwen21-nano-banana-space` (privado) y la Action `.github/workflows/sync-to-hf.yml` sincroniza el Space con el secret `HF_TOKEN` (solo el nombre). El Space no se edita a mano.
+- Sección de configuración para principiantes en SKILL y README (ES/EN): duplicar el Space a la cuenta propia, ZeroGPU con cuota Pro y token fine-grained con escritura. Sin valores de token.
+
 ## v5.0 · 2026-11-01
 - Nuevo repo privado `durang/qwen21-nano-banana-space`, que sincroniza con el Space `iccanobif/qwen21-nano-banana` mediante GitHub Actions y el secret HF_TOKEN. El Space toma 1–3 imágenes `<imageN>` y tiene modos Nano Banana. Solo usa Qwen 2.1.
 - Se suman al SKILL y al README las reglas de NANO-BANANA-VS-GPT-IMAGE:

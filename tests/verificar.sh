@@ -95,5 +95,11 @@ ok "H2 armar_hoja: sin img1 → ERROR SIN CARA (no genera)" "grep -q 'ERROR SIN 
 python3 "$R/tools/armar_hoja.py" "$T/hoja.png" --cara "$T/cara.png" --qwen34 "$T/e34.png" > "$T/viejo.txt" 2>&1
 ok "H3 el comando viejo de hoja numerada se rechaza" "grep -q 'v5.3' '$T/viejo.txt' && ! [ -f '$T/e34.png' ]"
 
+# ---------- regla 4r (C24): juez de cuerpo con tope, mock ----------
+JC="$R/tools/juez_cuerpo.py"; BASE='{"busto":"large","cadera":"medium","cintura":"slim","complexion":"slim-curvy"}'
+S() { echo "{\"busto\":\"$1\",\"cadera\":\"$2\",\"cintura\":\"slim\",\"complexion\":\"slim-curvy\",\"caras_repetidas\":false,\"manos_bien\":true}"; }
+ok "T15 regla 4r: busto menor → ok:false; +1 → ok; +2 → ok:false; cadera no visible se omite; sin medidas en el repo" \
+  "python3 '$JC' '$BASE' '$(S medium medium)' | grep -q '\"ok\": false' && python3 '$JC' '$BASE' '$(S 'very large' medium)' | grep -q '\"ok\": true' && python3 '$JC' '{\"busto\":\"medium\",\"cadera\":\"medium\",\"cintura\":\"slim\",\"complexion\":\"slim-curvy\"}' '$(S 'very large' medium)' | grep -q '\"ok\": false' && python3 '$JC' '$BASE' '$(S large 'not visible')' | grep -q '\"ok\": true' && grep -q 'Regla 4r' '$R/skill/SKILL.md' && grep -q '^## E36' '$R/docs/04-ERRORES.md' && grep -q '^## v5.5' '$R/CHANGELOG.md' && ! grep -rqE '95-6[5]-98' '$R' --exclude-dir=.git && ! ls '$R'/personajes/*/perfil.json 2>/dev/null"
+
 echo; echo "$PASS PASS · $FAIL FAIL"
 [ "$FAIL" = 0 ]

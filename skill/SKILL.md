@@ -31,7 +31,7 @@ ERRORES=$GUIA/docs/04-ERRORES.md        # E10+ automáticos
 
 
 ## 0b. Reglas duras (v4.4 — bar 31-oct + E27–E31 + 4b–4i del 1-nov-2026)
-> Índice: 1–14 abajo · **4b–4e** (img1 = base aprobada, sin cara no se genera, confirmación en texto, «varias») abajo · **4f** sujeto por defecto, **4g** solo el Space `iccanobif/qwen21-nano-banana` (Qwen 2.1), **4h** confirmación y candado, **4l** 1 persona en una sola llamada (C17), **4m** sin repetición (C18), **4n** el cliente solo recibe la foto final (v5.3), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
+> Índice: 1–14 abajo · **4b–4e** (img1 = base aprobada, sin cara no se genera, confirmación en texto, «varias») abajo · **4f** sujeto por defecto, **4g** solo el Space `iccanobif/qwen21-nano-banana` (Qwen 2.1), **4h** confirmación y candado, **4l** 1 persona en una sola llamada (C17), **4m** sin repetición (C18), **4n** el cliente solo recibe la foto final (v5.3), **4r** hoja con medidas como img1 y juez de cuerpo con tope (C24), **4i** legal, **4j** verificador de detalles y afirmaciones, **4k** aviso de licencia una vez por conversación: al final del archivo.
 **Antes de generar**
 1. **Confirma referencias + modelo y espera el OK.** `imagen_kontext` manda en texto «Usaré el Space iccanobif/qwen21-nano-banana (Qwen-Image 2.1)…» y qué archivo va en cada puesto. No adjunta una hoja ni manda las fotos una por una. Sin una **confirmación válida** del dueño (lista de 4h) no se genera nada.
 2. **Cuenta las imágenes recibidas.** Como mucho 3, y van juntas en una sola llamada. Si sobra alguna, dilo antes y explica por qué. Nunca la descartes en silencio y nunca la numeres en un mensaje aparte.
@@ -230,6 +230,13 @@ Cuando `imagen_kontext` (preparar) o `imagen_confirmar` (generar) ya mandó su m
 No se mandan referencias numeradas, ni una por una por Telegram ni juntas en una hoja. `imagen_kontext` confirma en texto. `imagen_confirmar` hace una sola llamada: `/edit_multi` con 1 a 3 imágenes, o `/generate` cuando no hay imágenes. El juez de visión corre antes de entregar, con como mucho 5 semillas. Al cliente le llega solo la foto que pasó.
 
 **EN — Rule 4n:** do not send numbered references, one by one or as a sheet. One Space call. The vision judge runs first, at most 5 seeds. The client only receives the final photo.
+
+### Regla 4r — Hoja con medidas como img1 y juez de cuerpo con tope (C24, v5.5)
+Si el personaje tiene `personajes/<nombre>/perfil.json` (privado, fuera del repo), cuando img1 sería su cara guardada (`ref/cara-1.png`) se usa en su lugar su hoja de personaje (`perfil.hoja`) y el prompt lleva su texto de medidas (`perfil.prompt_hoja`) más «no reproduzcas paneles, etiquetas ni colores de la hoja». Si img1 es una foto ya aprobada, no se cambia.
+El juez de cuerpo compara cada salida con el recorte de cuerpo completo de la hoja (`perfil.cuerpo_base`; el nombre lleva «hoja»): busto y cadera con tope en **ambos** sentidos sobre la escala small/medium/large/very large (menor que la base = `ok:false`; más de `tope_mas`, por defecto +1, = `ok:false`); la cadera se omite si no se ve; cintura ±1; complexión igual a la base.
+El prompt siempre lleva: «Do not add a jacket, coat or any extra clothing or layers unless the request asks for them.» (salvo que el pedido lo pida).
+Las medidas reales nunca van en código genérico ni en este repo: solo en `perfil.json` del personaje. Sin `perfil.json` el flujo es el de v5.4.
+**EN — Rule 4r:** if a private per-character `perfil.json` exists, its character sheet replaces the saved face as img1 and its measurement text goes in the prompt; a body judge with a two-sided cap (smaller or exaggerated bust/hip = reject) compares every output with the sheet's full-body crop. Never add extra clothing unless asked. Measurements live only in the private profile.
 
 ## 8. Mejoras C11–C17 (E27–E33)
 Genéricas. Valen para cualquier personaje. Nada de esto manda un collage al Space: la entrada sigue siendo hasta 3 imágenes sueltas (`/edit_multi`) o ninguna (`/generate`).

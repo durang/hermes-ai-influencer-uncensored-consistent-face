@@ -7,3 +7,5 @@ __pycache__/
 personajes/*/ref/*
 !personajes/*/ref/README.md
 !personajes/*/ref/.gitkeep
+personajes/*/perfil.json
+personajes/*/ref/*.png

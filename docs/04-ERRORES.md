@@ -61,3 +61,8 @@ El código de Hermes agrega una fila automáticamente: `| E{n} | síntoma | caus
 - **Causa:** el plugin enviaba las referencias por separado o compuestas, y el modelo las recibía así.
 - **Arreglo vigente:** no hay vista previa de referencias. `imagen_confirmar` llama una vez a `/edit_multi` (1 a 3 imágenes) o a `/generate` (ninguna). El juez corre antes de entregar. El cliente solo recibe la foto final.
 - **Regla:** 4n.
+
+## E36 · Cuerpo distinto de la hoja: busto menor o exagerado, chaqueta no pedida (2 nov 2026, C24)
+Síntoma: con solo la cara como img1, el modelo cambia el cuerpo (busto más chico o exagerado) y a veces agrega una chaqueta.
+Causa: la cara no fija el cuerpo y el juez solo revisaba la cara.
+Arreglo: regla 4r. Hoja del personaje como img1 con sus medidas (privadas, en `perfil.json`), juez de cuerpo con tope en ambos sentidos contra el recorte de cuerpo de la hoja, línea «no extra clothing unless asked».

@@ -21,7 +21,7 @@
 | `personajes/valeria/` | Primer personaje: ficha pública de Valeria (sin fotos, tokens ni IDs) |
 | `tools/armar_hoja.py` | Hoja numerada (proporción original) + entrada Qwen 3:4 1152x1536 en 2 columnas sin relleno (`--qwen34`), `--lugar`, `--recibidas N` |
 | `tools/qwen21_generar.py` | Prueba manual de Qwen-Image 2.1 en el host (calibración). **El bot no lo usa** |
-| `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro |
+| `docs/` | Pipeline, técnicas, prompts, errores (E1–E31), registro y [monetización de Spaces](docs/06-MONETIZACION-SPACES.md) |
 | `install.sh` | Instala y detecta el entorno; respalda con fecha antes de pisar y tiene `--dry-run` |
 | `tests/verificar.sh` | Pruebas del repo (instalador, docs, personajes, hoja) |
 | `PROPUESTAS.md` | Autoaprendizaje: propuestas de Hermes que Grok Bot revisa |
@@ -126,7 +126,7 @@ En el servidor (Contabo / Cerebro Central): **vestido, bikini, lencería y sensu
    - Solo permite uso **NO comercial ("research or evaluation purposes only")**. Para uso comercial hay que pedir una licencia aparte a `model-business@notice.qwencloud.com`.
    - Si las salidas se usan para entrenar o mejorar un modelo que se distribuye (por ejemplo, una LoRA de Valeria), hay que mostrar *"Built with Qwen"*.
    - Ley aplicable: China; tribunales de Hangzhou.
-   - **Vender o promocionar con estas fotos (Fanvue, redes, el curso) es uso comercial**: hace falta la licencia comercial o cambiar a un modelo con licencia comercial. Esto lo decide Sergio con su abogado.
+   - **Vender o promocionar con estas fotos (Fanvue, redes, el curso) es uso comercial**: hace falta la licencia comercial o cambiar a un modelo con licencia comercial. Esto lo decide Sergio con su abogado. El detalle de cuota, reparto de ingresos y nombres está en [docs/06-MONETIZACION-SPACES.md](docs/06-MONETIZACION-SPACES.md).
 4. **Antes de construir R2 (desnudo y sexo):** licencia comercial resuelta; un modelo y un proveedor cuyas reglas permitan ese contenido (este Space público no es el lugar); verificación de edad del lado del fan; etiqueta de IA; **cero caras reales** (4i); términos de Cloudflare revisados; revisión legal.
 
 ## Ejemplo con Valeria
@@ -184,6 +184,9 @@ Sin valores de token. Ni en el chat, ni en git, ni en una captura. En `.env` y e
 3. **Token fine-grained con escritura.** Hugging Face → Settings → Access Tokens → Create new token → **Fine-grained**. Incluye tu Space (o el del curso, si tienes acceso) con permiso de escritura. Cópialo una vez. En Hermes va en `.env` como `HF_TOKEN`. Para el deploy, el mismo nombre es el secret del repo en GitHub (Settings → Secrets and variables → Actions). Un token de solo lectura no deja que la Action sincronice el Space.
 4. **Apuntar la skill.** `qwen21_recetas.QWEN_MULTI["space"]` = `tu-usuario/tu-nombre` (o `iccanobif/qwen21-nano-banana` si llamas al del curso) y `RECETA="multi"`.
 
+## Monetización del Space
+Hugging Face no reparte ingresos: cada usuario gasta su cuota ZeroGPU y la del dueño solo baja cuando él llama con su token. La licencia Qwen Research no permite uso comercial sin una licencia aparte. La cláusula 4.c y el nombre «Nano Banana» (marca de producto de Google) se anotan en el doc; **no se renombra** el Space ni el repo. Texto completo, con fuentes: [docs/06-MONETIZACION-SPACES.md](docs/06-MONETIZACION-SPACES.md).
+
 ## Licencia
 [MIT](LICENSE) para el código y la documentación de este repo. **No cubre** el modelo Qwen-Image 2.1 (Qwen RESEARCH LICENSE, solo uso no comercial) ni fotos de terceros. El nombre y la apariencia de los personajes de ejemplo (Valeria) se incluyen como ficha pública; si el dueño quiere reservarlos como marca, tiene que excluirlos de la MIT antes de publicar el repo.
 
@@ -230,3 +233,5 @@ The only image model is the Hugging Face Space `iccanobif/qwen21-nano-banana` (Q
 **Deploy, repo first.** The source is the private repo `https://github.com/durang/qwen21-nano-banana-space` (create it private if it does not exist yet). A push to `main` runs `.github/workflows/sync-to-hf.yml`, which syncs the Space `iccanobif/qwen21-nano-banana` using the repo secret `HF_TOKEN` (write access; the name only). If the secret is missing, the workflow fails on purpose. Wait until the Space is Running. Hermes sets `qwen21_recetas.QWEN_MULTI["space"]` and `RECETA="multi"`. Do not edit the Space by hand.
 
 **Beginner setup.** ZeroGPU spends the caller's quota; a Pro plan raises it. Duplicate the Space (Duplicate this Space → your account → ZeroGPU → private). If the Space is private, you need access from the owner. Create a fine-grained token with write permission on that Space, store it once as `HF_TOKEN` in `.env` and, for deploy, as the GitHub Actions secret of the same name. Never put the token value in the repo, the chat or a screenshot. Point `QWEN_MULTI["space"]` at `your-user/your-space`. The course Action only updates `iccanobif/qwen21-nano-banana`; your duplicate does not follow those pushes unless you add your own workflow.
+
+**Space monetization.** Hugging Face does not share revenue. Each caller spends their own ZeroGPU quota; the owner's quota drops only when he calls the Space with his token. The Qwen Research license does not allow commercial use without a separate license. Clause 4.c and the Google product name "Nano Banana" are noted in the doc; the Space and the repo are not renamed. Full text and sources: [docs/06-MONETIZACION-SPACES.md](docs/06-MONETIZACION-SPACES.md).

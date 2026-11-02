@@ -1,6 +1,11 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v5.2 · 2026-11-02
+- Monetización de Spaces: resumen en `skill/SKILL.md`, texto completo en `docs/06-MONETIZACION-SPACES.md` y enlaces desde el README (ES/EN).
+- Hechos con fuente oficial: Hugging Face no reparte ingresos; cada usuario gasta su cuota ZeroGPU; la cuota del dueño baja solo cuando él llama con su token; la licencia Qwen Research no permite uso comercial sin una licencia aparte.
+- Nota de nombres (cláusula 4.c y «Nano Banana», nombre de producto de Google). No se renombra el Space `iccanobif/qwen21-nano-banana` ni el repo `durang/qwen21-nano-banana-space`.
+
 ## v5.1 · 2026-11-02
 - El Space `iccanobif/qwen21-nano-banana` pasa a ser el modelo de imagen obligatorio de la skill: el único permitido, con `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo. Sin pegar caras ni retoques por código; la luz y la integración las hace el modelo con el prompt. Regla 4g actualizada.
 - Queda documentado el proyecto completo: reglas tipo Nano Banana (máximo 3 imágenes; img1 = personaje aprobado; img2 = una foto de la segunda persona; img3 opcional; salida del tamaño de img1; pareja en pasos A/B/C; frase de una sola foto continua; negative anti-díptico; 40 pasos y true_cfg 4; juez de visión y reintentos internos con otra semilla, de modo que el cliente solo ve la foto buena), el flujo solo con Qwen 2.1, y el deploy desde el repo primero.

@@ -1,0 +1,8 @@
+{
+  "_nota": "Copia como perfil.json (NO lo subas al repo). Rellena con los datos de TU personaje.",
+  "hoja": "ref/hoja.png",
+  "cuerpo_base": "ref/hoja-cuerpo.png",
+  "prompt_hoja": "<image1> is a character reference sheet of ONE <describe>, <ESTATURA>, measurements <B-C-C> cm: copy her exact face and hair, and keep her body exactly as in the full-body standing panels of <image1>: <describe busto/cintura/cadera/complexión>.",
+  "tope_mas": 1,
+  "tope_menos": 0
+}

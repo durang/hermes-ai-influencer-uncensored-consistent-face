@@ -1,6 +1,9 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v5.5 · 2026-11-02
+- Regla 4r (C24, E36): `perfil.json` privado por personaje → su hoja como img1 + texto de medidas en el prompt; juez de cuerpo con tope en ambos sentidos (`tools/juez_cuerpo.py`); línea fija contra ropa no pedida. Sin perfil, todo igual que v5.4. Las medidas nunca entran al repo.
+
 ## v5.4 · 2026-11-02
 - Mejoras C11–C17 (E27–E33) en `skill/SKILL.md` §8, en `docs/04-ERRORES.md` y en el pipeline.
 - 4f: si el cliente no manda cara, img1 es `personajes/<nombre>/ref/cara-1.png`. Sus fotos se etiquetan ropa, objeto o lugar, nunca como cara. Una cara por persona. La entrada al Space sigue siendo hasta 3 imágenes sueltas, nunca un collage.

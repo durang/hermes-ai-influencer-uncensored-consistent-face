@@ -197,3 +197,31 @@ Sin secretos en el repo (`.env` está en `.gitignore`): ni tokens ni IDs de Tele
 **Security & license:** no tokens, Telegram IDs, real photos or fan data in the repo. [MIT](LICENSE) for the repo's code and docs; it does not cover the Qwen model (Qwen RESEARCH LICENSE, non-commercial) or third-party photos.
 
 **Using it with Grok Bot:** Grok Bot runs the interview, writes the character folder, builds/reviews sheets, logs errors and runs the nightly review; server changes go through the server bot (Cerebro Central) with the owner's OK.
+
+## Qwen 2.1 Space estilo Nano Banana (v5.0)
+Repo aparte, privado: `durang/qwen21-nano-banana-space`, que es la fuente del Space privado `iccanobif/qwen21-nano-banana` (ZeroGPU, cuota Pro gratis).
+- **Modelo:** solo Qwen-Image 2.1, el GGUF Q4_K_M de terceros `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` más el codificador de texto y el VAE oficiales. Licencia: Qwen Research License. Nunca FLUX, nunca pegar caras ni retocar con PIL.
+- **Endpoint** `/edit_multi(modo, instruccion, image1, image2, image3, aspect_ratio, steps, seed, randomize_seed)`, con 1–3 imágenes `<image1>`…`<image3>` que pasan al pipeline como lista.
+- **Modos:**
+  - `cara-cuerpo-estilo`;
+  - `solo-ropa`;
+  - `pareja-paso-A`, luego `dos-personas` (paso B) y después `pareja-paso-C`;
+  - `estilo`;
+  - `reiluminar`;
+  - `libre`.
+- **Reglas:**
+  - máximo 3 imágenes y nunca hojas ni collages;
+  - img1 es la base aprobada de Valeria, img2 es UNA foto de la segunda persona y img3 es opcional (prenda o estilo);
+  - la salida sale del tamaño de img1;
+  - un cambio por paso, repitiendo lo que se conserva, con posiciones explícitas;
+  - «single continuous photograph, one camera, one background, exactly N people»;
+  - la luz se cambia solo con el prompt;
+  - negative anti-díptico y true_cfg 4.0 si el pipeline los acepta;
+  - 40 pasos y sin Lightning;
+  - juez de visión en Hermes antes de entregar, con otra semilla en cada reintento.
+- **Deploy:**
+  1. Haz los cambios y el push al repo `qwen21-nano-banana-space`, rama `main`.
+  2. El workflow `.github/workflows/sync-to-hf.yml` empuja al Space usando el secret de repo `HF_TOKEN` (token de escritura de HF). Si el secret falta, el workflow falla a propósito.
+  3. El Space reconstruye; espera a que esté en Running.
+  4. En Hermes, `qwen21_recetas.QWEN_MULTI["space"]` apunta al Space y `RECETA="multi"`.
+  Nunca edites el Space a mano: la fuente es el repo.

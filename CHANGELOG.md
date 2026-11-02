@@ -1,6 +1,17 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v5.0 · 2026-11-01
+- Nuevo repo privado `durang/qwen21-nano-banana-space`, que sincroniza con el Space `iccanobif/qwen21-nano-banana` mediante GitHub Actions y el secret HF_TOKEN. El Space toma 1–3 imágenes `<imageN>` y tiene modos Nano Banana. Solo usa Qwen 2.1.
+- Se suman al SKILL y al README las reglas de NANO-BANANA-VS-GPT-IMAGE:
+  - máximo 3 imágenes;
+  - salida del tamaño de img1;
+  - pareja en pasos A/B/C;
+  - negative anti-díptico;
+  - 40 pasos y true_cfg 4;
+  - juez de visión.
+- También se documenta el flujo de deploy: primero el repo y después el Space.
+
 ## v4.9 · 2026-11-01
 - C19: la vista previa C2 es solo la hoja numerada con su pie; el plugin ya no manda el álbum suelto de referencias antes (regla 4n, E35). Test C3.
 

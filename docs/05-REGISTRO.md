@@ -19,6 +19,6 @@ El registro muestra **qué cambió entre un intento fallido y uno bueno**. Es la
 ## Registro automático
 El plugin escribe una línea por intento (solo metadatos, nunca imagen ni datos de fans). Campos nuevos: `confirmado_por_sergio (sí/no)`, `codigo_salida (0/2/3)`.
 ```
-2026-10-31 20:10 | catedral vestido negro | C2 | C2 | Qwen 2.1 | hoja-3-paneles-v2 | 42 | 40 | 1 | qwen-hoja-A.png | ✅ | sí | —
-2026-10-31 20:12 | catedral vestido negro | C2 | C2 | Qwen 2.1 | hoja-3-paneles-v2 | 7 | 40 | 2 | qwen-hoja-C.png | ❌ fondo restaurante | no | recortar panel 1
+2026-11-02 20:10 | café con camisa | edit_multi | img1+img3 | qwen21-nano-banana | ref-1 + camisa | 42 | 40 | 1 | interno | ❌ díptico | no | otra semilla; el cliente no la ve
+2026-11-02 20:12 | café con camisa | edit_multi | img1+img3 | qwen21-nano-banana | ref-1 + camisa | 43 | 40 | 2 | cafe-final.png | ✅ | sí | juez ok; solo esta foto sale
 ```

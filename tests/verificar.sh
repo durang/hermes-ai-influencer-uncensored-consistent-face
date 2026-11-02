@@ -80,26 +80,20 @@ ok "A2 autoaprendizaje en README ES/EN y SKILL" "grep -q '^## Autoaprendizaje (f
 ok "A3 NSFW preciso: R2 no construido" "grep -q 'todavía no está construido' '$R/README.md' && grep -q 'not built yet' '$R/README.md'"
 ok "C1 regla 4l (C17) y 4m (C18) en SKILL, E33/E34 en 04-ERRORES" "grep -q 'Regla 4l' '$R/skill/SKILL.md' && grep -q 'Regla 4m — Solo la vista previa del plugin' '$R/skill/SKILL.md' && grep -q 'ya_enviado_al_usuario' '$R/skill/SKILL.md' && grep -q '^## E33' '$R/docs/04-ERRORES.md' && grep -q '^## E34' '$R/docs/04-ERRORES.md'"
 ok "C2 SOUL de Valeria: no repite la vista previa (4m) + CHANGELOG v4.8" "grep -q 'regla 4m' '$R/personajes/valeria/SOUL.md' && grep -q '^## v4.8' '$R/CHANGELOG.md'"
-ok "C3 regla 4n (C19) en SKILL, E35 en 04-ERRORES, CHANGELOG v4.9" "grep -q 'Regla 4n — La vista previa es solo la hoja' '$R/skill/SKILL.md' && grep -q '^## E35' '$R/docs/04-ERRORES.md' && grep -q '^## v4.9' '$R/CHANGELOG.md'"
+ok "C3 v5.3 llamada directa al Space, sin hoja como entrada" "grep -q 'Regla 4n — El cliente solo recibe la foto final' '$R/skill/SKILL.md' && grep -q '/generate cuando no hay imágenes' '$R/docs/01-PIPELINE.md' && grep -q '^## E35' '$R/docs/04-ERRORES.md' && grep -q '^## v5.3' '$R/CHANGELOG.md' && ! grep -q 'hoja numerada' '$R/skill/SKILL.md' '$R/docs/01-PIPELINE.md' '$R/docs/02-TECNICAS.md'"
+ok "C4 C11–C17 (E27–E33): cara-1, prompt, juez a 5 y una confirmación" \
+  "grep -q '## 8. Mejoras C11' '$R/skill/SKILL.md' && grep -q 'ref/cara-1.png' '$R/skill/SKILL.md' && grep -q 'nunca como cara' '$R/skill/SKILL.md' && grep -q 'Exactly N person(s). Single photo, one scene, no panels, no collage, no split. No panels, no numbers, no text.' '$R/skill/SKILL.md' && grep -q 'relleno plano' '$R/skill/SKILL.md' && grep -q 'máximo 5' '$R/skill/SKILL.md' && grep -q 'una sola confirmación por vista previa' '$R/skill/SKILL.md' && grep -q 'El chat queda bloqueado mientras se genera' '$R/skill/SKILL.md' && grep -q '^## E27' '$R/docs/04-ERRORES.md' && grep -q '^## E28' '$R/docs/04-ERRORES.md' && grep -q '^## E29' '$R/docs/04-ERRORES.md' && grep -q '^## E30' '$R/docs/04-ERRORES.md' && grep -q '^## E31' '$R/docs/04-ERRORES.md' && grep -q '^## E32' '$R/docs/04-ERRORES.md' && grep -q 'máximo 5' '$R/docs/01-PIPELINE.md' && grep -q '^## v5.4' '$R/CHANGELOG.md' && ! grep -q 'máximo 3 semillas' '$R/skill/SKILL.md' '$R/docs/01-PIPELINE.md' '$R/README.md'"
 ok "CL2 CHANGELOG v4.7" "grep -q '^## v4.7' '$R/CHANGELOG.md'"
 ok "CL1 CHANGELOG v4.6" "grep -q '^## v4.6' '$R/CHANGELOG.md'"
 
-# ---------- herramienta de hoja ----------
-if python3 -c "import PIL" 2>/dev/null; then
-  python3 - "$T" <<'PY'
-import sys
-from PIL import Image
-t = sys.argv[1]
-Image.new("RGB", (900, 1200), (200, 160, 140)).save(f"{t}/cara.png")
-Image.new("RGB", (1200, 800), (40, 60, 90)).save(f"{t}/lugar.png")
-PY
-  python3 "$R/tools/armar_hoja.py" "$T/hoja.png" --cara "$T/cara.png" --lugar "$T/lugar.png" --recibidas 1 --qwen34 "$T/e34.png" > "$T/hoja.txt" 2>&1
-  ok "H1 armar_hoja: hoja + entrada 3:4 1152x1536" "grep -q 'OK qwen34' '$T/hoja.txt' && python3 -c \"from PIL import Image; import sys; sys.exit(0 if Image.open('$T/e34.png').size==(1152,1536) else 1)\""
-  python3 "$R/tools/armar_hoja.py" "$T/x.png" --lugar "$T/lugar.png" > "$T/sincara.txt" 2>&1
-  ok "H2 armar_hoja: sin cara → ERROR SIN CARA (no genera)" "grep -q 'ERROR SIN CARA' '$T/sincara.txt'"
-else
-  echo "SKIP H1/H2 (falta Pillow)"
-fi
+# ---------- orden de la llamada (v5.3) ----------
+: > "$T/cara.png"; : > "$T/prenda.png"
+python3 "$R/tools/armar_hoja.py" --img1 "$T/cara.png" --img3 "$T/prenda.png" > "$T/orden.txt" 2>&1
+ok "H1 armar_hoja: /edit_multi con img1 e img3, sin crear una hoja" "grep -q 'OK edit_multi n=2' '$T/orden.txt' && grep -q 'img1=' '$T/orden.txt' && grep -q 'img3=' '$T/orden.txt' && ! [ -f '$T/hoja.png' ]"
+python3 "$R/tools/armar_hoja.py" --img3 "$T/prenda.png" > "$T/sincara.txt" 2>&1
+ok "H2 armar_hoja: sin img1 → ERROR SIN CARA (no genera)" "grep -q 'ERROR SIN CARA' '$T/sincara.txt'"
+python3 "$R/tools/armar_hoja.py" "$T/hoja.png" --cara "$T/cara.png" --qwen34 "$T/e34.png" > "$T/viejo.txt" 2>&1
+ok "H3 el comando viejo de hoja numerada se rechaza" "grep -q 'v5.3' '$T/viejo.txt' && ! [ -f '$T/e34.png' ]"
 
 echo; echo "$PASS PASS · $FAIL FAIL"
 [ "$FAIL" = 0 ]

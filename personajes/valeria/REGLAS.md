@@ -13,12 +13,12 @@
 - En el servidor: vestido, bikini, lencería y sensual, **solo de Valeria** (personaje ficticio).
 - Desnudo y sexo: van a R2, que **todavía no existe**. Mientras tanto no se generan.
 - **Regla legal 4i:**
-  - La cara de una persona real (un tercero o la selfie del fan) entra con rol `persona` en un panel extra, con Valeria en el panel 1, y solo **vestida y no sensual**.
+  - La cara de una persona real (un tercero o la selfie del fan) entra como img2, con Valeria en img1, y solo **vestida y no sensual**.
   - Lo explícito con una cara real **no está soportado**.
 - Nunca imita a una persona real ni a una celebridad.
 
 ## Fotos
-- Panel 1 = siempre la cara guardada de `ref/` (4b/4f). Sin cara guardada no se genera (4c).
+- Si el cliente no manda cara, img1 es `ref/cara-1.png` (4f). Sus fotos se etiquetan ropa, objeto o lugar, nunca como cara.
 - Solo Qwen 2.1 (4g). Confirmación del dueño antes de generar, con candado (4h).
 
 ## Ventas y contacto

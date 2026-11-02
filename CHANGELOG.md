@@ -1,6 +1,40 @@
 # CHANGELOG
 Formato: versión · fecha · cambios. Lo más reciente arriba. Desde v4.5 vive en la raíz del repo (antes `docs/CHANGELOG.md`).
 
+## v5.4 · 2026-11-02
+- Mejoras C11–C17 (E27–E33) en `skill/SKILL.md` §8, en `docs/04-ERRORES.md` y en el pipeline.
+- 4f: si el cliente no manda cara, img1 es `personajes/<nombre>/ref/cara-1.png`. Sus fotos se etiquetan ropa, objeto o lugar, nunca como cara. Una cara por persona. La entrada al Space sigue siendo hasta 3 imágenes sueltas, nunca un collage.
+- Plantilla: «Exactly N person(s). Single photo, one scene, no panels, no collage, no split. No panels, no numbers, no text.»
+- El juez rechaza relleno plano, proporción distinta de 3:4, costuras rectas, identidad repetida o un conteo distinto de N. Reintentos internos con otra semilla, máximo 5 en todo el repo. Si los 5 fallan, no se manda foto. «caras OK» solo si la revisión lo verificó.
+- «Varias fotos» = 3 (máximo 4), cada una con su revisión. El chat queda bloqueado mientras genera y solo hay una confirmación por vista previa. Solo Qwen 2.1, sin modelo de respaldo.
+
+## v5.3 · 2026-11-02
+- Flujo de Telegram nuevo: Hermes llama directo al Space `iccanobif/qwen21-nano-banana`. `/edit_multi` lleva 1 a 3 imágenes en una sola llamada (img1 = base aprobada, img2 = una foto de la 2.ª persona, img3 = prenda o estilo). `/generate` cuando no hay imágenes.
+- Se quita el método viejo: fotos numeradas una por una y hojas numeradas como entrada del modelo. El juez de visión corre antes de entregar; reintentos internos con otra semilla, máximo 3. El cliente solo recibe la foto final.
+- Pipeline vigente en `docs/01-PIPELINE.md`. `tools/armar_hoja.py` solo comprueba el orden. `tools/qwen21_generar.py` usa el Space nuevo.
+
+## v5.2 · 2026-11-02
+- Monetización de Spaces: resumen en `skill/SKILL.md`, texto completo en `docs/06-MONETIZACION-SPACES.md` y enlaces desde el README (ES/EN).
+- Hechos con fuente oficial: Hugging Face no reparte ingresos; cada usuario gasta su cuota ZeroGPU; la cuota del dueño baja solo cuando él llama con su token; la licencia Qwen Research no permite uso comercial sin una licencia aparte.
+- Nota de nombres (cláusula 4.c y «Nano Banana», nombre de producto de Google). No se renombra el Space `iccanobif/qwen21-nano-banana` ni el repo `durang/qwen21-nano-banana-space`.
+
+## v5.1 · 2026-11-02
+- El Space `iccanobif/qwen21-nano-banana` pasa a ser el modelo de imagen obligatorio de la skill: el único permitido, con `/edit_multi` (1 a 3 imágenes) y `/generate`. Ningún otro modelo. Sin pegar caras ni retoques por código; la luz y la integración las hace el modelo con el prompt. Regla 4g actualizada.
+- Queda documentado el proyecto completo: reglas tipo Nano Banana (máximo 3 imágenes; img1 = personaje aprobado; img2 = una foto de la segunda persona; img3 opcional; salida del tamaño de img1; pareja en pasos A/B/C; frase de una sola foto continua; negative anti-díptico; 40 pasos y true_cfg 4; juez de visión y reintentos internos con otra semilla, de modo que el cliente solo ve la foto buena), el flujo solo con Qwen 2.1, y el deploy desde el repo primero.
+- Conexión: push a `https://github.com/durang/qwen21-nano-banana-space` (privado) y la Action `.github/workflows/sync-to-hf.yml` sincroniza el Space con el secret `HF_TOKEN` (solo el nombre). El Space no se edita a mano.
+- Sección de configuración para principiantes en SKILL y README (ES/EN): duplicar el Space a la cuenta propia, ZeroGPU con cuota Pro y token fine-grained con escritura. Sin valores de token.
+
+## v5.0 · 2026-11-01
+- Nuevo repo privado `durang/qwen21-nano-banana-space`, que sincroniza con el Space `iccanobif/qwen21-nano-banana` mediante GitHub Actions y el secret HF_TOKEN. El Space toma 1–3 imágenes `<imageN>` y tiene modos Nano Banana. Solo usa Qwen 2.1.
+- Se suman al SKILL y al README las reglas de NANO-BANANA-VS-GPT-IMAGE:
+  - máximo 3 imágenes;
+  - salida del tamaño de img1;
+  - pareja en pasos A/B/C;
+  - negative anti-díptico;
+  - 40 pasos y true_cfg 4;
+  - juez de visión.
+- También se documenta el flujo de deploy: primero el repo y después el Space.
+
 ## v4.9 · 2026-11-01
 - C19: la vista previa C2 es solo la hoja numerada con su pie; el plugin ya no manda el álbum suelto de referencias antes (regla 4n, E35). Test C3.
 

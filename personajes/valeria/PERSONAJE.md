@@ -19,7 +19,7 @@
 | Estilo | Casual, cotidiano, natural |
 
 ## Referencias
-Las fotos van en `ref/` **en la instalación**, no en el repo. `ref/README.md` dice cuáles poner y con qué nombre. La cara principal (panel 1) es `ref-1-calle.png` (`REF_PRINCIPAL`).
+Las fotos van en `ref/` **en la instalación**, no en el repo. `ref/README.md` dice cuáles poner y con qué nombre. La cara guardada (img1) es `cara-1.png`.
 
 ## Regla de realismo iPhone X/12
 Toda foto debe parecer tomada con un **iPhone X o 12**:
